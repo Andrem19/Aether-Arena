@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "218305711511",
+    "project_id": "narutoarena-c6ca7",
+    "storage_bucket": "narutoarena-c6ca7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:218305711511:android:f86ccb7d3c5f0382f288d2",
+        "android_client_info": {
+          "package_name": "com.example.the_test_naruto_arena"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "218305711511-4pumbhrh5n48ehrord6tndgb36tjb9ik.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrzLgyRbIwYI2IZOOJVWfHrdIeZMB9DYo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "218305711511-4pumbhrh5n48ehrord6tndgb36tjb9ik.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
