@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/routing/app_pages.dart';
-import 'package:the_test_naruto_arena/screen/email_pass_screen.dart';
-
 import '../widgets/authbutton.dart';
-import 'google_sign_in_screen.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -19,7 +16,7 @@ class AuthScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'Choose an authentication method',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
@@ -36,7 +33,7 @@ class AuthScreen extends StatelessWidget {
               onTap: () {
                 Get.toNamed(Routes.GOOGLE_AUTH);
               },
-            )
+            ),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:the_test_naruto_arena/controllers/binding/bindings.dart';
 import 'package:the_test_naruto_arena/screen/auth_screen.dart';
 import 'package:the_test_naruto_arena/screen/card_collection/cards.dart';
 import 'package:the_test_naruto_arena/screen/email_pass_screen.dart';
@@ -18,37 +19,36 @@ class AppPages {
 
   static final routes = [
     GetPage(
-      name: _Paths.GENERAL_MENU, 
-      page: () => GeneralMenu(), 
+      name: _Paths.GENERAL_MENU,
+      page: () => GeneralMenu(),
     ),
     GetPage(
-      name: _Paths.INITIAL, 
-      page: () => InitialPage(), 
+      name: _Paths.INITIAL,
+      page: () => InitialPage(),
     ),
     GetPage(
-      name: _Paths.AUTHORIZATION, 
-      page: () => AuthScreen(), 
+      name: _Paths.AUTHORIZATION,
+      page: () => AuthScreen(),
     ),
     GetPage(
-      name: _Paths.EMAIL_AUTH, 
-      page: () => EmailPassScreen(), 
+      name: _Paths.EMAIL_AUTH,
+      page: () => EmailPassScreen(),
     ),
     GetPage(
-      name: _Paths.GOOGLE_AUTH, 
-      page: () => GoogleSignIn(), 
+      name: _Paths.GOOGLE_AUTH,
+      page: () => GoogleSignIn(),
     ),
     GetPage(
-      name: _Paths.CARDS_COLLECTION, 
-      page: () => CardCollection(), 
+      name: _Paths.CARDS_COLLECTION,
+      page: () => CardCollection(),
     ),
     GetPage(
-      name: _Paths.PLAY_MENU, 
-      page: () => PlayMenu(), 
+      name: _Paths.PLAY_MENU,
+      page: () => PlayMenu(),
     ),
     GetPage(
-      name: _Paths.SETTINGS, 
-      page: () => SettingsPage(), 
-    ),
-
-    ];
+      name: _Paths.SETTINGS,
+      page: () => SettingsPage(),
+      binding: SettingsControllerBinding()),
+  ];
 }

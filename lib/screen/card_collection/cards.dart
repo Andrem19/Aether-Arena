@@ -1,7 +1,10 @@
-
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:the_test_naruto_arena/controllers/main_game_controller.dart';
 import 'package:the_test_naruto_arena/elements/appbar.dart';
+import 'package:the_test_naruto_arena/models/user.dart';
+
+import '../../elements/info_board.dart';
 
 class CardCollection extends StatelessWidget {
   const CardCollection({super.key});
@@ -9,44 +12,71 @@ class CardCollection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarPages.getAppBar('Card Collection'),
-      body: Center(child: Container(
-        decoration: BoxDecoration(
-                color: Color.fromARGB(255, 133, 131, 131),
-                border: Border.all(
-                  width: 1.0,
-                  color: Colors.black26,
+      body: GetBuilder<MainGameController>(builder: (controller) {
+        return SafeArea(
+          child: Column(
+            children: [
+              InfoBoard(),
+              SizedBox(
+                height: 15,
+              ),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 133, 131, 131),
+                    border: Border.all(
+                      width: 1.0,
+                      color: Colors.black26,
+                    ),
+                  ),
+                  alignment: Alignment.topCenter,
+                  child: GridView.count(
+                    shrinkWrap: true,
+                    crossAxisCount: 4,
+                    children:
+                        List.generate(controller.characters.length, (index) {
+                      return InkWell(
+                        onTap: () {
+                          controller.showCardDialog(context);
+                        },
+                        child: Opacity(
+                          opacity: controller.isThisCardOpen(
+                                  controller.characters[index].name)
+                              ? 1
+                              : 0.4,
+                          child: Card(
+                            child: Stack(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.black,
+                                      width: 3,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Image.asset(
+                                      controller.characters[index].img),
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text('Name'),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
                 ),
               ),
-              width: 300,
-              alignment: Alignment.topCenter,
-        child: GridView.count(
-                shrinkWrap: true,
-                crossAxisCount: 4,
-                children: List.generate(100, (index) {
-                  return Card(
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Colors.black,
-                                        width: 3,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Icon(Icons.abc)
-                                  ),
-                                    Column(
-                                      children: [
-                                        Text('Name'),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              );
-                }),),
-      )),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

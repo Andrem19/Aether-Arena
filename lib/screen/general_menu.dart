@@ -25,16 +25,6 @@ class _GeneralMenuState extends State<GeneralMenu> {
     return GetBuilder<AuthProviderController>(
       builder: (controller) {
         return Scaffold(
-            appBar: AppBar(
-              title: Text(controller.userProfile.value.userName),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      controller.logOut();
-                    },
-                    icon: const Icon(Icons.logout))
-              ],
-            ),
             body: MenuElement());
       },
     );
