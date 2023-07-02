@@ -34,15 +34,13 @@ class CardCollection extends StatelessWidget {
                         List.generate(controller.characters.length, (index) {
                       return InkWell(
                         onTap: () {
-                          controller.showCardDialog(context);
+                          controller.showCardDialog(context, controller.characters[index]);
                         },
                         child: Opacity(
-                          opacity: controller.isThisCardOpen(
-                                  controller.characters[index].id)
+                          opacity: controller.characters[index].isOpen
                               ? 1
                               : 0.4,
-                          child: controller.isThisCardOpen(
-                                  controller.characters[index].id) ? LongPressDraggable(
+                          child: controller.characters[index].isOpen ? LongPressDraggable(
                             data: controller.characters[index],
                             feedback: Card(
                               child: Stack(

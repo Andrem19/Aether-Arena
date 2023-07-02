@@ -1,21 +1,28 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:the_test_naruto_arena/models/skill.dart';
 
+import 'condition.dart';
+
 class Character {
   int id;
   String name;
   String img;
   List<Skill> skills;
+  bool isOpen;
+  Condition? condition;
   Character({
     required this.id,
     required this.name,
     required this.img,
     required this.skills,
+    required this.isOpen,
+    required this.condition,
   });
 }
 
 class Skill {
   String name;
+  String img;
   String energy;
   String target;
   String effect;
@@ -23,6 +30,7 @@ class Skill {
   int cooldown;
   Skill({
     required this.name,
+    required this.img,
     required this.energy,
     required this.target,
     required this.effect,

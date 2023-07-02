@@ -17,7 +17,9 @@ class MainGameController extends GetxController {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   Uuid uuid = Uuid();
   Rx<UserProfile> userProfile = UserProfile.getEmpty().obs;
+  RxList<HistoryBattle> historyOfMyBattle = <HistoryBattle>[].obs;
   late AuthProviderController _authProviderController;
+  int curentlevel = 0;
   List<Character> characters = [];
   @override
   void onInit() async {
@@ -39,7 +41,7 @@ class MainGameController extends GetxController {
     _authProviderController = authProviderController;
   }
 
-  void showCardDialog(BuildContext context) {
+  void showCardDialog(BuildContext context, Character character) {
     showDialog(
       context: context,
       builder: (_) {
@@ -57,7 +59,7 @@ class MainGameController extends GetxController {
                       shrinkWrap: true,
                       crossAxisCount: 4,
                       children: List.generate(
-                        8,
+                        character.skills.length,
                         (index) => GestureDetector(
                           onTapDown: (_) {
                             showDialog(
@@ -88,7 +90,8 @@ class MainGameController extends GetxController {
                                 ),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Icon(Icons.abc),
+                              child: Image.asset(
+                                  getSkillImage(character.skills[index])),
                             ),
                           ),
                         ),
@@ -211,7 +214,8 @@ class MainGameController extends GetxController {
   }
 
   String getRank() {
-    int level = getLevel();
+    var res = getLevel();
+    int level = res['level']!;
     if (level > 0 && level <= 5) {
       return 'Porcelain';
     } else if (level > 5 && level <= 10) {
@@ -237,7 +241,7 @@ class MainGameController extends GetxController {
     }
   }
 
-  int getLevel() {
+  Map<String, int> getLevel() {
     int kof = 100;
     int myExp = userProfile.value.expirience;
     int level = 0;
@@ -246,6 +250,81 @@ class MainGameController extends GetxController {
       myExp -= kof;
       kof += 25;
     }
-    return level - 1;
+    level -= 1;
+    curentlevel = level;
+    return {
+      "level": level,
+      "kof": kof,
+      "myExp": kof - myExp.abs(),
+    };
+  }
+
+  String getSkillImage(Skill skill) {
+    if (skill.img != '') {
+      return skill.img;
+    } else {
+      return 'assets/default_skill.jpg';
+    }
+  }
+
+  Future<void> getHistory() async {
+    var doc = await firebaseFirestore
+        .collection('history')
+        .doc(userProfile.value.uid)
+        .get();
+    var data = doc.data();
+    List<dynamic> myHistory = data!['myHistory'];
+    List<String> listHist = List<String>.from(myHistory);
+    for (var i = 0; i < listHist.length; i++) {
+      historyOfMyBattle.add(HistoryBattle.fromJson(listHist[i]));
+    }
+    setCardsOpen();
+  }
+
+  void setCardsOpen() {
+    for (var i = 0; i < characters.length; i++) {
+      characters[i].isOpen = isCardOpen(characters[i]);
+    }
+  }
+
+  bool isCardOpen(Character card) {
+    if (card.condition != null) {
+      if (curentlevel < card.condition!.RequiredLevel) {
+        return false;
+      }
+      List<bool> res = [];
+      for (var i = 0; i < card.condition!.winnConditions.length; i++) {
+        bool shouldBeCont =
+            card.condition!.winnConditions[i].ShouldBeContinuously;
+        int numberOfWinRequired = card.condition!.winnConditions[i].count;
+        int counter = 0;
+        for (var j = 0; j < historyOfMyBattle.length; j++) {
+          if (historyOfMyBattle[j].isIWinner &&
+              compareLists(historyOfMyBattle[j].mySet,
+                  card.condition!.winnConditions[i].mySet)) {
+            counter += 1;
+            if (counter >= numberOfWinRequired) {
+              res.add(true);
+              break;
+            }
+          } else if (shouldBeCont) {
+            counter = 0;
+          }
+        }
+      }
+      if (res.length >= card.condition!.winnConditions.length &&
+          res.every((element) => true)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  }
+
+  bool compareLists(List<int> list1, List<int> list2) {
+    return Set<int>.from(list1).containsAll(list2) &&
+        Set<int>.from(list2).containsAll(list1);
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/auth_provider.dart';
 import 'package:the_test_naruto_arena/controllers/main_game_controller.dart';
+import 'package:the_test_naruto_arena/elements/exp_line.dart';
 import 'package:the_test_naruto_arena/models/character.dart';
 
 class InfoBoard extends StatelessWidget {
@@ -88,8 +89,13 @@ class InfoBoard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Rank: ${controller.getRank()}', style: TextStyle(fontSize: 20),),
-                      Text('Level: ${controller.getLevel()}', style: TextStyle(fontSize: 20),),
+                      Text('Rank: ${controller.getRank()}', style: const TextStyle(fontSize: 20),),
+                      Row(
+                        children: [
+                          const Text('Level: ', style: TextStyle(fontSize: 20),),
+                          ExpLine.getExpLine(controller),
+                        ],
+                      ),
                       ],
                   ),
                 )
@@ -113,7 +119,6 @@ class InfoBoard extends StatelessWidget {
                             return InkWell(
                               onTap: () {
                                 controller.deleteCardFromMySet(index);
-                                controller.addHistory(index);
                               },
                               child: Card(
                                 child: Image.asset(

@@ -33,7 +33,7 @@ class AuthProviderController extends GetxController {
 
   @override
   void onInit() async {
-    getFillLoginFields();
+    await getFillLoginFields();
     super.onInit();
   }
 
@@ -53,7 +53,7 @@ class AuthProviderController extends GetxController {
     _mainGameController = mainGameController;
   }
 
-  void getFillLoginFields() async {
+  Future<void> getFillLoginFields() async {
     emailController.text = box.get('email') ?? '';
     passwordController.text = box.get('password') ?? '';
   }
@@ -95,7 +95,7 @@ class AuthProviderController extends GetxController {
           'uid': userCredential.user!.uid,
           'userName': userNameController.text.replaceAll(RegExp(r'\s+'), ''),
           'personalSettings': PersonalSettings.getDefault().toJson(),
-          'mySet': [0,0,0],
+          'mySet': [0, 0, 0],
           'openCards': [1],
           'avatar': '',
           'nickWasChanged': 0,
@@ -121,7 +121,8 @@ class AuthProviderController extends GetxController {
             email: emailController.text, password: passwordController.text);
         if (userCredential.user!.emailVerified) {
           userAuth.value = true;
-          setProfile(userCredential.user!.uid);
+          await setProfile(userCredential.user!.uid);
+          await _mainGameController.getHistory();
           update();
           Get.offAllNamed(Routes.INITIAL);
         } else {
@@ -174,9 +175,10 @@ class AuthProviderController extends GetxController {
     return false;
   }
 
-  void setProfile(String uid) async {
+  Future<void> setProfile(String uid) async {
     UserProfile user = await getUserProfile(uid);
     _mainGameController.userProfile.value = user;
+    _mainGameController.getLevel();
     _mainGameController.update();
   }
 
@@ -191,8 +193,12 @@ class AuthProviderController extends GetxController {
           email: data['email'],
           userName: data['userName'],
           personalSettings: PersonalSettings.fromJson(data['personalSettings']),
-          mySet: (data['mySet'] as List<dynamic>).map((card) => int.parse(card.toString())).toList(),
-          openCards: (data['openCards'] as List<dynamic>).map((card) => int.parse(card.toString())).toList(),
+          mySet: (data['mySet'] as List<dynamic>)
+              .map((card) => int.parse(card.toString()))
+              .toList(),
+          openCards: (data['openCards'] as List<dynamic>)
+              .map((card) => int.parse(card.toString()))
+              .toList(),
           avatar: data['avatar'],
           nickWasChanged: data['nickWasChanged'],
           expirience: data['expirience']);
