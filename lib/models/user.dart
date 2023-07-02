@@ -11,9 +11,11 @@ class UserProfile {
   String email;
   String userName;
   PersonalSettings personalSettings;
-  List<String> mySet;
-  List<String> openCards;
+  List<int> mySet;
+  List<int> openCards;
   String avatar;
+  int nickWasChanged;
+  int expirience;
   UserProfile({
     required this.isLoaded,
     required this.uid,
@@ -23,6 +25,8 @@ class UserProfile {
     required this.mySet,
     required this.openCards,
     required this.avatar,
+    required this.nickWasChanged,
+    required this.expirience,
   });
   static UserProfile getEmpty() {
     return UserProfile(
@@ -31,9 +35,11 @@ class UserProfile {
         email: '',
         userName: '',
         personalSettings: PersonalSettings.getDefault(),
-        mySet: List.empty(),
-        openCards: List.empty(),
-        avatar: '');
+        mySet: [0, 0, 0],
+        openCards: [1],
+        avatar: '',
+        nickWasChanged: 0,
+        expirience: 0);
   }
 
   UserProfile copyWith({
@@ -42,9 +48,11 @@ class UserProfile {
     String? email,
     String? userName,
     PersonalSettings? personalSettings,
-    List<String>? mySet,
-    List<String>? openCards,
+    List<int>? mySet,
+    List<int>? openCards,
     String? avatar,
+    int? nickWasChanged,
+    int? expirience,
   }) {
     return UserProfile(
       isLoaded: isLoaded ?? this.isLoaded,
@@ -55,6 +63,8 @@ class UserProfile {
       mySet: mySet ?? this.mySet,
       openCards: openCards ?? this.openCards,
       avatar: avatar ?? this.avatar,
+      nickWasChanged: nickWasChanged ?? this.nickWasChanged,
+      expirience: expirience ?? this.expirience,
     );
   }
 
@@ -68,6 +78,8 @@ class UserProfile {
       'mySet': mySet,
       'openCards': openCards,
       'avatar': avatar,
+      'nickWasChanged': nickWasChanged,
+      'expirience': expirience,
     };
   }
 
@@ -78,9 +90,11 @@ class UserProfile {
       email: map['email'] as String,
       userName: map['userName'] as String,
       personalSettings: PersonalSettings.fromMap(map['personalSettings'] as Map<String,dynamic>),
-      mySet: List<String>.from((map['mySet'] as List<String>)),
-      openCards: List<String>.from((map['openCards'] as List<String>)),
+      mySet: List<int>.from((map['mySet'] as List<int>)),
+      openCards: List<int>.from((map['openCards'] as List<int>)),
       avatar: map['avatar'] as String,
+      nickWasChanged: map['nickWasChanged'] as int,
+      expirience: map['expirience'] as int,
     );
   }
 
@@ -91,7 +105,7 @@ class UserProfile {
 
   @override
   String toString() {
-    return 'UserProfile(isLoaded: $isLoaded, uid: $uid, email: $email, userName: $userName, personalSettings: $personalSettings, mySet: $mySet, openCards: $openCards, avatar: $avatar)';
+    return 'UserProfile(isLoaded: $isLoaded, uid: $uid, email: $email, userName: $userName, personalSettings: $personalSettings, mySet: $mySet, openCards: $openCards, avatar: $avatar, nickWasChanged: $nickWasChanged, expirience: $expirience)';
   }
 
   @override
@@ -106,7 +120,9 @@ class UserProfile {
       other.personalSettings == personalSettings &&
       listEquals(other.mySet, mySet) &&
       listEquals(other.openCards, openCards) &&
-      other.avatar == avatar;
+      other.avatar == avatar &&
+      other.nickWasChanged == nickWasChanged &&
+      other.expirience == expirience;
   }
 
   @override
@@ -118,6 +134,8 @@ class UserProfile {
       personalSettings.hashCode ^
       mySet.hashCode ^
       openCards.hashCode ^
-      avatar.hashCode;
+      avatar.hashCode ^
+      nickWasChanged.hashCode ^
+      expirience.hashCode;
   }
 }

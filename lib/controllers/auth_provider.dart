@@ -95,9 +95,18 @@ class AuthProviderController extends GetxController {
           'uid': userCredential.user!.uid,
           'userName': userNameController.text.replaceAll(RegExp(r'\s+'), ''),
           'personalSettings': PersonalSettings.getDefault().toJson(),
-          'mySet': [],
-          'openCards': ["Warrior"],
+          'mySet': [0,0,0],
+          'openCards': [1],
           'avatar': '',
+          'nickWasChanged': 0,
+          'expirience': 100,
+        });
+        await firebaseFirestore
+            .collection('history')
+            .doc(userCredential.user!.uid)
+            .set({
+          'myHistory': [],
+          'uid': userCredential.user!.uid,
         });
         Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
           content: Text(
@@ -182,9 +191,11 @@ class AuthProviderController extends GetxController {
           email: data['email'],
           userName: data['userName'],
           personalSettings: PersonalSettings.fromJson(data['personalSettings']),
-          mySet: (data['mySet'] as List<dynamic>).map((card) => card.toString()).toList(),
-          openCards: (data['openCards'] as List<dynamic>).map((card) => card.toString()).toList(),
-          avatar: data['avatar']);
+          mySet: (data['mySet'] as List<dynamic>).map((card) => int.parse(card.toString())).toList(),
+          openCards: (data['openCards'] as List<dynamic>).map((card) => int.parse(card.toString())).toList(),
+          avatar: data['avatar'],
+          nickWasChanged: data['nickWasChanged'],
+          expirience: data['expirience']);
     }
     return UserProfile.getEmpty();
   }

@@ -23,34 +23,28 @@ class SettingsController extends GetxController {
     String normalizedName =
         userNameController.value.text.replaceAll(RegExp(r'\s+'), '');
     bool res = await authCtrl.chekNameExist(normalizedName);
-    if (res) {
+    bool res2 = checkNickChangeAllowd();
+    if (res || !res2) {
       return;
     }
     try {
+      int time = Timestamp.now().seconds;
+      mainCtrl.userProfile.value.nickWasChanged = time;
       mainCtrl.userProfile.value.userName = normalizedName;
-      var user = await firebaseFirestore
+
+      await firebaseFirestore
           .collection('users')
           .doc(mainCtrl.userProfile.value.uid)
-          .get();
-      if (user.exists) {
-        await firebaseFirestore
-            .collection('users')
-            .doc(mainCtrl.userProfile.value.uid)
-            .update({
-          'userName': normalizedName,
-        });
-        update();
-        Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
-          content: Text('Name updated'),
-          backgroundColor: Color.fromARGB(255, 54, 244, 67),
-        ));
-        Get.offNamed(Routes.INITIAL);
-      } else {
-        Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
-          content: Text('User doesnt exist'),
-          backgroundColor: Colors.red,
-        ));
-      }
+          .update({
+        'userName': normalizedName,
+        'nickWasChanged': time,
+      });
+      update();
+      Keys.scaffoldMessengerKey.currentState!.showSnackBar(const SnackBar(
+        content: Text('Name updated'),
+        backgroundColor: Color.fromARGB(255, 54, 244, 67),
+      ));
+      Get.offNamed(Routes.INITIAL);
     } on FirebaseException catch (error) {
       Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
         content: Text(error.code),
@@ -62,5 +56,18 @@ class SettingsController extends GetxController {
         backgroundColor: Colors.red,
       ));
     }
+  }
+
+  bool checkNickChangeAllowd() {
+    int timestamp = Timestamp.now().seconds - 604800;
+    bool res = mainCtrl.userProfile.value.nickWasChanged < timestamp;
+    if (!res) {
+      Keys.scaffoldMessengerKey.currentState!.showSnackBar(const SnackBar(
+        content: Text(
+            'You need to wait one week before you can change your nickname again'),
+        backgroundColor: Colors.red,
+      ));
+    }
+    return res;
   }
 }

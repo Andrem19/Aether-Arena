@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/auth_provider.dart';
 import 'package:the_test_naruto_arena/controllers/main_game_controller.dart';
+import 'package:the_test_naruto_arena/models/character.dart';
 
 class InfoBoard extends StatelessWidget {
   const InfoBoard({super.key});
@@ -13,8 +14,9 @@ class InfoBoard extends StatelessWidget {
     AuthProviderController authCtrl = Get.find<AuthProviderController>();
     return GetBuilder<MainGameController>(builder: (controller) {
       return Container(
-        height: Get.height / 2.5,
+        height: Get.height * 0.38,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -52,11 +54,13 @@ class InfoBoard extends StatelessWidget {
                     child: controller.userProfile.value.avatar == ''
                         ? Image.asset(
                             'assets/default_avatar.jpg',
-                            width: Get.width / 4,
+                            width: Get.height * 0.14,
+                            height: Get.height * 0.14,
                           )
                         : Image.network(
                             controller.userProfile.value.avatar,
-                            width: Get.width / 4,
+                            width: Get.height * 0.14,
+                            height: Get.height * 0.14,
                           ),
                   ),
                   Positioned(
@@ -82,33 +86,47 @@ class InfoBoard extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: [Text('Level: 1')],
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Rank: ${controller.getRank()}', style: TextStyle(fontSize: 20),),
+                      Text('Level: ${controller.getLevel()}', style: TextStyle(fontSize: 20),),
+                      ],
                   ),
                 )
               ],
             ),
             SizedBox(
-              height: 15,
+              height: Get.height * 0.01,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: List.generate(
-                  3,
-                  (index) => Card(
-                        child: controller.userProfile.value.mySet.isNotEmpty
-                            ? Image.asset(
-                                controller
-                                    .getCharFromName(controller
-                                        .userProfile.value.mySet[index])
-                                    .img,
-                                width: Get.width / 5,
-                              )
-                            : Image.asset(
-                                'assets/none_char.png',
-                                width: Get.width / 5,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: List.generate(
+                    3,
+                    (index) => DragTarget<Character>(
+                          onAccept: (data) {
+                            print(controller.userProfile.value.mySet);
+                            controller.infoBoardMySetOnAccept(index, data);
+                          },
+                          builder: (context, _, __) {
+                            return InkWell(
+                              onTap: () {
+                                controller.deleteCardFromMySet(index);
+                                controller.addHistory(index);
+                              },
+                              child: Card(
+                                child: Image.asset(
+                                  controller.getCharacterImageFromId(controller
+                                      .userProfile.value.mySet[index]),
+                                  width: Get.height * 0.12,
+                                ),
                               ),
-                      )),
-            )
+                            );
+                          },
+                        )),
+              ),
+            ),
           ],
         ),
       );

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/auth_provider.dart';
 import 'package:the_test_naruto_arena/controllers/routing/app_pages.dart';
 import 'package:the_test_naruto_arena/elements/info_board.dart';
+import 'package:the_test_naruto_arena/elements/line_beetwen.dart';
 import 'package:the_test_naruto_arena/widgets/menubutton.dart';
 
 class MenuElement extends StatelessWidget {
@@ -18,7 +19,7 @@ class MenuElement extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             InfoBoard(),
-            const SizedBox(height: 20,),
+            Line.getLine(),
             MenuButton(
               title: 'Play',
               onTap: () => Get.toNamed(Routes.PLAY_MENU),

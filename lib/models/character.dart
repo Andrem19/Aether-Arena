@@ -2,14 +2,14 @@
 import 'package:the_test_naruto_arena/models/skill.dart';
 
 class Character {
+  int id;
   String name;
   String img;
-  bool open;
   List<Skill> skills;
   Character({
+    required this.id,
     required this.name,
     required this.img,
-    required this.open,
     required this.skills,
   });
 }

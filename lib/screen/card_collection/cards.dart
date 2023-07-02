@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/main_game_controller.dart';
-import 'package:the_test_naruto_arena/elements/appbar.dart';
-import 'package:the_test_naruto_arena/models/user.dart';
 
 import '../../elements/info_board.dart';
+import '../../elements/line_beetwen.dart';
 
 class CardCollection extends StatelessWidget {
   const CardCollection({super.key});
@@ -17,9 +16,7 @@ class CardCollection extends StatelessWidget {
           child: Column(
             children: [
               InfoBoard(),
-              SizedBox(
-                height: 15,
-              ),
+              Line.getLine(),
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
@@ -41,32 +38,81 @@ class CardCollection extends StatelessWidget {
                         },
                         child: Opacity(
                           opacity: controller.isThisCardOpen(
-                                  controller.characters[index].name)
+                                  controller.characters[index].id)
                               ? 1
                               : 0.4,
-                          child: Card(
-                            child: Stack(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.black,
-                                      width: 3,
+                          child: controller.isThisCardOpen(
+                                  controller.characters[index].id) ? LongPressDraggable(
+                            data: controller.characters[index],
+                            feedback: Card(
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.black,
+                                        width: 3,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.asset(
+                                        controller.characters[index].img, height: Get.height /7,),
                                   ),
-                                  child: Image.asset(
-                                      controller.characters[index].img),
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('Name'),
-                                  ],
-                                )
-                              ],
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('Name'),
+                                    ],
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
+                            child: Card(
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.black,
+                                        width: 3,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Image.asset(
+                                        controller.characters[index].img),
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('Name'),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ) : Card(
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.black,
+                                        width: 3,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Image.asset(
+                                        controller.characters[index].img),
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('Name'),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
                         ),
                       );
                     }),

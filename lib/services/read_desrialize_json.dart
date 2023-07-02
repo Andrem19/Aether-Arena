@@ -11,9 +11,9 @@ class ReadJson {
   List<Character> characters = [];
 
   for (var jsonObj in jsonList) {
+    var id = jsonObj['id'];
     var name = jsonObj['name'];
     var img = jsonObj['img'];
-    var open = jsonObj['open'];
     var skillJsonList = jsonObj['Skills'];
     List<Skill> skills = [];
 
@@ -38,9 +38,9 @@ class ReadJson {
     }
 
     Character character = Character(
+      id: id,
       name: name,
       img: img,
-      open: open,
       skills: skills,
     );
 

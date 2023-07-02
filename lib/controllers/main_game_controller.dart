@@ -4,15 +4,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/auth_provider.dart';
+import 'package:the_test_naruto_arena/models/history_battle.dart';
 import 'package:the_test_naruto_arena/services/read_desrialize_json.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:file_picker/file_picker.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/character.dart';
 import '../models/user.dart';
 
 class MainGameController extends GetxController {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  Uuid uuid = Uuid();
   Rx<UserProfile> userProfile = UserProfile.getEmpty().obs;
   late AuthProviderController _authProviderController;
   List<Character> characters = [];
@@ -122,28 +125,40 @@ class MainGameController extends GetxController {
     );
   }
 
-  bool isThisCardOpen(String name) {
-    if (userProfile.value.openCards.contains(name)) {
+  bool isThisCardOpen(int id) {
+    if (userProfile.value.openCards.contains(id)) {
       return true;
     } else {
       return false;
     }
   }
 
-  Character getCharFromName(String name) {
-    return characters.firstWhere((element) => element.name == name,
+  Character getCharacterFromId(int id) {
+    return characters.firstWhere((element) => element.id == id,
         orElse: () => characters[0]);
   }
 
-  Future<File?> pickImageFromGallery() async {
-  FilePickerResult? pickedImage = await FilePicker.platform.pickFiles(type: FileType.image);
-
-  if (pickedImage != null) {
-    return File(pickedImage.files.single.path!);
-  } else {
-    return null;
+  String getCharacterImageFromId(int id) {
+    if (id != 0) {
+      return characters
+          .firstWhere((element) => element.id == id,
+              orElse: () => characters[0])
+          .img;
+    } else {
+      return 'assets/none_char.png';
+    }
   }
-}
+
+  Future<File?> pickImageFromGallery() async {
+    FilePickerResult? pickedImage =
+        await FilePicker.platform.pickFiles(type: FileType.image);
+
+    if (pickedImage != null) {
+      return File(pickedImage.files.single.path!);
+    } else {
+      return null;
+    }
+  }
 
   Future<String?> uploadImageToFirebaseStorage(File imageFile) async {
     try {
@@ -165,5 +180,72 @@ class MainGameController extends GetxController {
       print(e.toString());
       return null;
     }
+  }
+
+  void infoBoardMySetOnAccept(int index, Character data) async {
+    if (userProfile.value.mySet.contains(data.id)) {
+      return;
+    }
+    userProfile.value.mySet[index] = data.id;
+    await firebaseFirestore.doc('users/${userProfile.value.uid}').update({
+      'mySet': userProfile.value.mySet,
+    });
+    update();
+  }
+
+  void deleteCardFromMySet(int index) async {
+    userProfile.value.mySet[index] = 0;
+    await firebaseFirestore.doc('users/${userProfile.value.uid}').update({
+      'mySet': userProfile.value.mySet,
+    });
+    update();
+  }
+
+  void addHistory(int index) async {
+    String identificator = uuid.v4();
+    HistoryBattle historyBattle = HistoryBattle.getEmptyHistoryBattle();
+    historyBattle.identificator = identificator;
+    firebaseFirestore.collection('history').doc(userProfile.value.uid).update({
+      'myHistory': FieldValue.arrayUnion([historyBattle.toJson()]),
+    });
+  }
+
+  String getRank() {
+    int level = getLevel();
+    if (level > 0 && level <= 5) {
+      return 'Porcelain';
+    } else if (level > 5 && level <= 10) {
+      return 'Obsidian';
+    } else if (level > 10 && level <= 15) {
+      return 'Steel';
+    } else if (level > 15 && level <= 20) {
+      return 'Sapphire';
+    } else if (level > 20 && level <= 25) {
+      return 'Emerald';
+    } else if (level > 25 && level <= 30) {
+      return 'Ruby';
+    } else if (level > 30 && level <= 35) {
+      return 'Bronze';
+    } else if (level > 35 && level <= 40) {
+      return 'Silver';
+    } else if (level > 40 && level <= 45) {
+      return 'Gold';
+    } else if (level > 45) {
+      return 'Platinum';
+    } else {
+      return 'Porcelain';
+    }
+  }
+
+  int getLevel() {
+    int kof = 100;
+    int myExp = userProfile.value.expirience;
+    int level = 0;
+    while (myExp >= 0) {
+      level++;
+      myExp -= kof;
+      kof += 25;
+    }
+    return level - 1;
   }
 }
