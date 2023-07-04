@@ -1,5 +1,4 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:the_test_naruto_arena/models/skill.dart';
 
 import 'condition.dart';
 
