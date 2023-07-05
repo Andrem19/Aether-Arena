@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.the_test_naruto_arena">
+    package="quibgames.aetherarena">
    <application
-        android:label="the_test_naruto_arena"
+        android:label="Aether Arena"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

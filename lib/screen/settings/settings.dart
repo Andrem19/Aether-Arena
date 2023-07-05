@@ -54,6 +54,39 @@ class SettingsPage extends StatelessWidget {
                       
                         ],
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Add To Black List:',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: Get.size.width / 2,
+                            child: CustomTextField(
+                                controller: controller.blackListName,
+                                iconData: Icons.person,
+                                hintText: 'User Name'),
+                          ),
+                          SizedBox(
+                            width: 15,
+                          ),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey,
+                                  textStyle: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold)),
+                              onPressed: () async {
+                                controller.addToBlackList();
+                              },
+                              child: Text('Submit')),
+                      
+                        ],
+                      ),
                     ],
                   ),
           );

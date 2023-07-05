@@ -11,7 +11,8 @@ abstract class Routes {
   static const PLAY_MENU = _Paths.PLAY_MENU;
   static const SETTINGS = _Paths.SETTINGS;
   static const CARDS_COLLECTION = _Paths.CARDS_COLLECTION;
-
+  static const WAITING_PAGE = _Paths.WAITING_PAGE;
+  static const BATTLE_ACT = _Paths.BATTLE_ACT;
 }
 
 abstract class _Paths {
@@ -23,5 +24,7 @@ abstract class _Paths {
   static const PLAY_MENU = "/play_menu";
   static const SETTINGS = "/settings";
   static const CARDS_COLLECTION = "/cards_collection";
+  static const WAITING_PAGE = "/waiting_page";
+  static const BATTLE_ACT = "/battle_act";
 
 }

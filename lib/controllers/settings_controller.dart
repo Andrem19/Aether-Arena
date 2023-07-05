@@ -11,6 +11,7 @@ class SettingsController extends GetxController {
   MainGameController mainCtrl = Get.find<MainGameController>();
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   TextEditingController userNameController = TextEditingController();
+  TextEditingController blackListName = TextEditingController();
 
   @override
   void onInit() async {
@@ -54,6 +55,22 @@ class SettingsController extends GetxController {
       Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
         content: Text(error.toString()),
         backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  void addToBlackList() async {
+    if (blackListName.text != mainCtrl.userProfile.value.userName) {
+      await firebaseFirestore
+          .collection('users')
+          .doc(mainCtrl.userProfile.value.uid)
+          .update({
+        'blackList': FieldValue.arrayUnion([blackListName.text])
+      });
+      blackListName.clear();
+      Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
+        content: Text('The user has been blacklisted. Sorry for the inconvenience.'),
+        backgroundColor: Colors.green,
       ));
     }
   }

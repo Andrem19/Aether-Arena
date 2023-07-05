@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_test_naruto_arena/controllers/main_game_controller.dart';
 import 'package:the_test_naruto_arena/controllers/routing/app_pages.dart';
 import 'package:the_test_naruto_arena/models/personal_settings.dart';
@@ -19,9 +19,9 @@ class AuthProviderController extends GetxController {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
+  late SharedPreferences prefs;
   late Stream<User?> snapshots;
   late StreamSubscription<User?> listner;
-  var box = Hive.box('credentials');
   Timer? _timer;
   AuthType _authType = AuthType.signIn;
   AuthType get authType => _authType;
@@ -33,6 +33,7 @@ class AuthProviderController extends GetxController {
 
   @override
   void onInit() async {
+    prefs = await SharedPreferences.getInstance();
     await getFillLoginFields();
     super.onInit();
   }
@@ -54,8 +55,8 @@ class AuthProviderController extends GetxController {
   }
 
   Future<void> getFillLoginFields() async {
-    emailController.text = box.get('email') ?? '';
-    passwordController.text = box.get('password') ?? '';
+    emailController.text = prefs.getString('email') ?? '';
+    passwordController.text = prefs.getString('password') ?? '';
   }
 
   bool checkAuthentication() {
@@ -72,8 +73,8 @@ class AuthProviderController extends GetxController {
   authenticate() async {
     late UserCredential userCredential;
     if (saveInPref.value) {
-      box.put('email', emailController.text);
-      box.put('password', passwordController.text);
+      prefs.setString('email', emailController.text);
+      prefs.setString('password', passwordController.text);
     }
 
     try {
@@ -96,10 +97,15 @@ class AuthProviderController extends GetxController {
           'userName': userNameController.text.replaceAll(RegExp(r'\s+'), ''),
           'personalSettings': PersonalSettings.getDefault().toJson(),
           'mySet': [0, 0, 0],
-          'openCards': [1],
           'avatar': '',
           'nickWasChanged': 0,
-          'expirience': 100,
+          'expirience': 1,
+          'isUserInGame': false,
+          'isAnybodyAscMe': false,
+          'whoInviteMeToPlay': '',
+          'theGameIdInviteMe': '',
+          'wantToPlay': true,
+          'blackList': [],
         });
         await firebaseFirestore
             .collection('history')
@@ -188,20 +194,23 @@ class AuthProviderController extends GetxController {
       var data = doc.data();
 
       return UserProfile(
-          isLoaded: true,
-          uid: data!['uid'],
-          email: data['email'],
-          userName: data['userName'],
-          personalSettings: PersonalSettings.fromJson(data['personalSettings']),
-          mySet: (data['mySet'] as List<dynamic>)
-              .map((card) => int.parse(card.toString()))
-              .toList(),
-          openCards: (data['openCards'] as List<dynamic>)
-              .map((card) => int.parse(card.toString()))
-              .toList(),
-          avatar: data['avatar'],
-          nickWasChanged: data['nickWasChanged'],
-          expirience: data['expirience']);
+        isLoaded: true,
+        uid: data!['uid'],
+        email: data['email'],
+        userName: data['userName'],
+        personalSettings: PersonalSettings.fromJson(data['personalSettings']),
+        mySet: (data['mySet'] as List<dynamic>)
+            .map((card) => int.parse(card.toString()))
+            .toList(),
+        avatar: data['avatar'],
+        nickWasChanged: data['nickWasChanged'],
+        expirience: data['expirience'],
+        isUserInGame: data['isUserInGame'],
+        isAnybodyAscMe: data['isAnybodyAscMe'],
+        whoInviteMeToPlay: data['whoInviteMeToPlay'],
+        theGameIdInviteMe: data['theGameIdInviteMe'],
+        wantToPlay: data['wantToPlay'],
+      );
     }
     return UserProfile.getEmpty();
   }
@@ -279,7 +288,7 @@ class AuthProviderController extends GetxController {
   logOut() async {
     try {
       await firebaseAuth.signOut();
-      await googleSignIn.signOut();
+      // await googleSignIn.signOut();
       _timer?.cancel();
       userAuth.value = false;
       Get.offAllNamed(Routes.INITIAL);

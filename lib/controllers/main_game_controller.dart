@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,16 +11,26 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:file_picker/file_picker.dart';
 import 'package:uuid/uuid.dart';
 
+import '../keys.dart';
 import '../models/character.dart';
 import '../models/user.dart';
+import '../widgets/custom_text_field.dart';
+import 'routing/app_pages.dart';
 
 class MainGameController extends GetxController {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  late Stream<DocumentSnapshot<Map<String, dynamic>>> snapshots;
+  late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> listner;
   Uuid uuid = Uuid();
   Rx<UserProfile> userProfile = UserProfile.getEmpty().obs;
   RxList<HistoryBattle> historyOfMyBattle = <HistoryBattle>[].obs;
   late AuthProviderController _authProviderController;
-  int curentlevel = 0;
+  TextEditingController namePrivateBattle = TextEditingController();
+  RxInt curentlevel = 0.obs;
+  GameType gameType = GameType.QuickBattle;
+  String curentGameId = '';
+  String curentRole = 'A';
+  String playerWhoIInvite_ID = '';
   List<Character> characters = [];
   @override
   void onInit() async {
@@ -126,14 +137,6 @@ class MainGameController extends GetxController {
         );
       },
     );
-  }
-
-  bool isThisCardOpen(int id) {
-    if (userProfile.value.openCards.contains(id)) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   Character getCharacterFromId(int id) {
@@ -244,18 +247,18 @@ class MainGameController extends GetxController {
   Map<String, int> getLevel() {
     int kof = 100;
     int myExp = userProfile.value.expirience;
-    int level = 0;
+    int level = 1;
     while (myExp >= 0) {
       level++;
       myExp -= kof;
       kof += 25;
     }
     level -= 1;
-    curentlevel = level;
+    curentlevel.value = level;
     return {
       "level": level,
       "kof": kof,
-      "myExp": kof - myExp.abs(),
+      "myExp": kof - myExp.abs() - 25,
     };
   }
 
@@ -327,4 +330,252 @@ class MainGameController extends GetxController {
     return Set<int>.from(list1).containsAll(list2) &&
         Set<int>.from(list2).containsAll(list1);
   }
+
+  void privateBattleDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            title: const Text('Enter name'),
+            content: CustomTextField(
+              iconData: Icons.person,
+              hintText: 'Enter name',
+              controller: namePrivateBattle,
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () async {
+                    final navigator = Navigator.of(context).pop();
+                    try {} catch (error) {
+                      Keys.scaffoldMessengerKey.currentState!
+                          .showSnackBar(SnackBar(
+                        content: Text(error.toString()),
+                        backgroundColor: Colors.red,
+                      ));
+                      navigator;
+                    }
+                  },
+                  child: const Text('Invite To Play'))
+            ],
+          );
+        });
+  }
+
+  void deleteGameInstant() async {
+    var doc =
+        await firebaseFirestore.collection('battles').doc(curentGameId).get();
+    if (doc.exists) {
+      var data = doc.data();
+      bool Player_A = data!['PlayerA_ready'];
+      bool Player_B = data['PlayerB_ready'];
+      if (!Player_A && !Player_B) {
+        await firebaseFirestore
+            .collection('battles')
+            .doc(curentGameId)
+            .delete();
+      }
+    }
+  }
+
+  Future<void> setUpListner() async {
+    snapshots = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userProfile.value.uid)
+        .snapshots();
+    listner = snapshots.listen((data) {
+      bool isAnybodyAscMe = data['isAnybodyAscMe'];
+      String whoAskMe = data['whoInviteMeToPlay'];
+      String theGameIdInviteMe = data['theGameIdInviteMe'];
+      if (isAnybodyAscMe) {
+        firebaseFirestore
+            .collection('users')
+            .doc(userProfile.value.uid)
+            .update({
+          'isAnybodyAscMe': false,
+        });
+        changeStatusInGame(true);
+        Get.dialog(AlertDialog(
+            title: Text('$whoAskMe invite your to the game'),
+            content: const Text('Do you want to play?'),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    textStyle: const TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold)),
+                onPressed: () {
+                  changeStatusInGame(false);
+                  firebaseFirestore
+                      .collection('battles')
+                      .doc(theGameIdInviteMe)
+                      .update({
+                    'IcantPlay': true,
+                  });
+                  Get.back();
+                },
+                child: Text(
+                  'NO',
+                  style: TextStyle(color: Colors.white, fontSize: 16.0),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    textStyle: const TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold)),
+                onPressed: () {
+                  agreeToPlayPreparing(theGameIdInviteMe);
+                },
+                child: Text(
+                  'YES',
+                  style: TextStyle(color: Colors.white, fontSize: 16.0),
+                ),
+              ),
+            ]));
+      }
+    });
+  }
+
+  bool checkAndSayIfNotFullSet() {
+    if (userProfile.value.mySet[0] != 0 &&
+        userProfile.value.mySet[1] != 0 &&
+        userProfile.value.mySet[2] != 0) {
+      return true;
+    } else {
+      Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
+        content: Text('You must select a full set to play.'),
+        backgroundColor: Colors.red,
+      ));
+      return false;
+    }
+  }
+
+  Future<void> agreeToPlayPreparing(String theGameIdInviteMe) async {
+    if (!checkAndSayIfNotFullSet()) {
+      return;
+    }
+    await deleteAllMyGamesIfExist();
+    try {
+      firebaseFirestore.collection('battles').doc(theGameIdInviteMe).update({
+        'Player_B_uid': userProfile.value.uid,
+        'PlayerB_Name': userProfile.value.userName,
+        'gameStatus': 'game'
+      });
+      var doc = await firebaseFirestore
+          .collection('battles')
+          .doc(theGameIdInviteMe)
+          .get();
+
+      curentGameId = theGameIdInviteMe;
+      curentRole = 'B';
+
+      Get.toNamed(Routes.BATTLE_ACT);
+    } on FirebaseException catch (error) {
+      Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
+        content: Text(error.code),
+        backgroundColor: Colors.red,
+      ));
+    } catch (error) {
+      Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
+        content: Text(error.toString()),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  void changeStatusInGame(bool status) async {
+    await firebaseFirestore
+        .collection('users')
+        .doc(userProfile.value.uid)
+        .update({
+      'isUserInGame': status,
+    });
+  }
+
+  Future<void> deleteAllMyGamesIfExist() async {
+    var gameList_A = await firebaseFirestore
+        .collection('battles')
+        .where('PlayerA_uid', isEqualTo: userProfile.value.uid)
+        .get();
+    if (gameList_A.docs.length > 0) {
+      for (var i = 0; i < gameList_A.docs.length; i++) {
+        await firebaseFirestore
+            .collection('battles')
+            .doc(gameList_A.docs[i].id)
+            .delete();
+      }
+    }
+
+    var gameList_B = await firebaseFirestore
+        .collection('battles')
+        .where('PlayerB_uid', isEqualTo: userProfile.value.uid)
+        .get();
+    if (gameList_B.docs.length > 0) {
+      for (var i = 0; i < gameList_B.docs.length; i++) {
+        await firebaseFirestore
+            .collection('battles')
+            .doc(gameList_B.docs[i].id)
+            .delete();
+      }
+    }
+  }
+
+  void changeWantToPlay() async {
+    await firebaseFirestore
+        .collection('users')
+        .doc(userProfile.value.uid)
+        .update({
+      'wantToPlay': userProfile.value.wantToPlay,
+    });
+    if (userProfile.value.wantToPlay) {
+      Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
+        content:
+            Text('You have allowed other players to invite you to the game'),
+        backgroundColor: Colors.green,
+      ));
+    } else {
+      Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
+        content: Text(
+            'You have blocked other players from inviting you to the game'),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  void invitePlayerForBattle() async {
+    await deleteAllMyGamesIfExist();
+
+    var doc = await firebaseFirestore
+        .collection('users')
+        .where('name', isEqualTo: namePrivateBattle.text)
+        .get();
+    if (doc.docs.length > 0) {
+      var data = doc.docs[0].data();
+      bool status = data['isUserInGame'] as bool;
+      bool alowed = data['wantToPlay'] as bool;
+      if (alowed) {
+        if (status) {
+          Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
+            content: Text('This user currently playing another game'),
+            backgroundColor: Colors.red,
+          ));
+          return;
+        }
+        changeStatusInGame(true);
+        curentRole = 'A';
+        playerWhoIInvite_ID = doc.docs[0].id; //????
+
+        Get.toNamed(Routes.WAITING_PAGE);
+        namePrivateBattle.clear();
+      } else if (!alowed) {
+        Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
+          content: Text('Player has disabled game invites'),
+          backgroundColor: Colors.red,
+        ));
+        return;
+      }
+    }
+  }
 }
+
+enum GameType { LadderBattle, QuickBattle, PrivateBattle }

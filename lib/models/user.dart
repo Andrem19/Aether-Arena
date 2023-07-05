@@ -12,10 +12,14 @@ class UserProfile {
   String userName;
   PersonalSettings personalSettings;
   List<int> mySet;
-  List<int> openCards;
   String avatar;
   int nickWasChanged;
   int expirience;
+  bool isUserInGame;
+  bool isAnybodyAscMe;
+  String whoInviteMeToPlay;
+  String theGameIdInviteMe;
+  bool wantToPlay;
   UserProfile({
     required this.isLoaded,
     required this.uid,
@@ -23,10 +27,14 @@ class UserProfile {
     required this.userName,
     required this.personalSettings,
     required this.mySet,
-    required this.openCards,
     required this.avatar,
     required this.nickWasChanged,
     required this.expirience,
+    required this.isUserInGame,
+    required this.isAnybodyAscMe,
+    required this.whoInviteMeToPlay,
+    required this.theGameIdInviteMe,
+    required this.wantToPlay,
   });
   static UserProfile getEmpty() {
     return UserProfile(
@@ -36,10 +44,14 @@ class UserProfile {
         userName: '',
         personalSettings: PersonalSettings.getDefault(),
         mySet: [0, 0, 0],
-        openCards: [1],
         avatar: '',
         nickWasChanged: 0,
-        expirience: 0);
+        expirience: 0,
+        isUserInGame: true,
+        isAnybodyAscMe: false,
+        theGameIdInviteMe: '',
+        whoInviteMeToPlay: '',
+        wantToPlay: true);
   }
 
   UserProfile copyWith({
@@ -49,10 +61,14 @@ class UserProfile {
     String? userName,
     PersonalSettings? personalSettings,
     List<int>? mySet,
-    List<int>? openCards,
     String? avatar,
     int? nickWasChanged,
     int? expirience,
+    bool? isUserInGame,
+    bool? isAnybodyAscMe,
+    String? whoInviteMeToPlay,
+    String? theGameIdInviteMe,
+    bool? wantToPlay,
   }) {
     return UserProfile(
       isLoaded: isLoaded ?? this.isLoaded,
@@ -61,10 +77,14 @@ class UserProfile {
       userName: userName ?? this.userName,
       personalSettings: personalSettings ?? this.personalSettings,
       mySet: mySet ?? this.mySet,
-      openCards: openCards ?? this.openCards,
       avatar: avatar ?? this.avatar,
       nickWasChanged: nickWasChanged ?? this.nickWasChanged,
       expirience: expirience ?? this.expirience,
+      isUserInGame: isUserInGame ?? this.isUserInGame,
+      isAnybodyAscMe: isAnybodyAscMe ?? this.isAnybodyAscMe,
+      whoInviteMeToPlay: whoInviteMeToPlay ?? this.whoInviteMeToPlay,
+      theGameIdInviteMe: theGameIdInviteMe ?? this.theGameIdInviteMe,
+      wantToPlay: wantToPlay ?? this.wantToPlay,
     );
   }
 
@@ -76,10 +96,14 @@ class UserProfile {
       'userName': userName,
       'personalSettings': personalSettings.toMap(),
       'mySet': mySet,
-      'openCards': openCards,
       'avatar': avatar,
       'nickWasChanged': nickWasChanged,
       'expirience': expirience,
+      'isUserInGame': isUserInGame,
+      'isAnybodyAscMe': isAnybodyAscMe,
+      'whoInviteMeToPlay': whoInviteMeToPlay,
+      'theGameIdInviteMe': theGameIdInviteMe,
+      'wantToPlay': wantToPlay,
     };
   }
 
@@ -91,10 +115,14 @@ class UserProfile {
       userName: map['userName'] as String,
       personalSettings: PersonalSettings.fromMap(map['personalSettings'] as Map<String,dynamic>),
       mySet: List<int>.from((map['mySet'] as List<int>)),
-      openCards: List<int>.from((map['openCards'] as List<int>)),
       avatar: map['avatar'] as String,
       nickWasChanged: map['nickWasChanged'] as int,
       expirience: map['expirience'] as int,
+      isUserInGame: map['isUserInGame'] as bool,
+      isAnybodyAscMe: map['isAnybodyAscMe'] as bool,
+      whoInviteMeToPlay: map['whoInviteMeToPlay'] as String,
+      theGameIdInviteMe: map['theGameIdInviteMe'] as String,
+      wantToPlay: map['wantToPlay'] as bool,
     );
   }
 
@@ -105,7 +133,7 @@ class UserProfile {
 
   @override
   String toString() {
-    return 'UserProfile(isLoaded: $isLoaded, uid: $uid, email: $email, userName: $userName, personalSettings: $personalSettings, mySet: $mySet, openCards: $openCards, avatar: $avatar, nickWasChanged: $nickWasChanged, expirience: $expirience)';
+    return 'UserProfile(isLoaded: $isLoaded, uid: $uid, email: $email, userName: $userName, personalSettings: $personalSettings, mySet: $mySet, avatar: $avatar, nickWasChanged: $nickWasChanged, expirience: $expirience, isUserInGame: $isUserInGame, isAnybodyAscMe: $isAnybodyAscMe, whoInviteMeToPlay: $whoInviteMeToPlay, theGameIdInviteMe: $theGameIdInviteMe, wantToPlay: $wantToPlay)';
   }
 
   @override
@@ -119,10 +147,14 @@ class UserProfile {
       other.userName == userName &&
       other.personalSettings == personalSettings &&
       listEquals(other.mySet, mySet) &&
-      listEquals(other.openCards, openCards) &&
       other.avatar == avatar &&
       other.nickWasChanged == nickWasChanged &&
-      other.expirience == expirience;
+      other.expirience == expirience &&
+      other.isUserInGame == isUserInGame &&
+      other.isAnybodyAscMe == isAnybodyAscMe &&
+      other.whoInviteMeToPlay == whoInviteMeToPlay &&
+      other.theGameIdInviteMe == theGameIdInviteMe &&
+      other.wantToPlay == wantToPlay;
   }
 
   @override
@@ -133,9 +165,13 @@ class UserProfile {
       userName.hashCode ^
       personalSettings.hashCode ^
       mySet.hashCode ^
-      openCards.hashCode ^
       avatar.hashCode ^
       nickWasChanged.hashCode ^
-      expirience.hashCode;
+      expirience.hashCode ^
+      isUserInGame.hashCode ^
+      isAnybodyAscMe.hashCode ^
+      whoInviteMeToPlay.hashCode ^
+      theGameIdInviteMe.hashCode ^
+      wantToPlay.hashCode;
   }
 }

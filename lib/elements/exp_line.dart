@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:the_test_naruto_arena/controllers/main_game_controller.dart';
 
 class ExpLine {
+
   static Widget getExpLine(MainGameController controller) {
     var levelInfo = controller.getLevel();
     int oneProc = levelInfo['kof']! ~/ 100;

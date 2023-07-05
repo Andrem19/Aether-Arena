@@ -1,4 +1,4 @@
-package com.example.the_test_naruto_arena
+package quibgames.aetherarena
 
 import io.flutter.embedding.android.FlutterActivity
 

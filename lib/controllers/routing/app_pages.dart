@@ -9,6 +9,8 @@ import 'package:the_test_naruto_arena/screen/play/playmenu.dart';
 import 'package:the_test_naruto_arena/screen/settings/settings.dart';
 
 import '../../screen/general_menu.dart';
+import '../../screen/play/battleact.dart';
+import '../../screen/play/waiting_page.dart';
 
 part 'app_routes.dart';
 
@@ -49,6 +51,17 @@ class AppPages {
     GetPage(
       name: _Paths.SETTINGS,
       page: () => SettingsPage(),
-      binding: SettingsControllerBinding()),
+      binding: SettingsControllerBinding()
+    ),
+    GetPage(
+      name: _Paths.WAITING_PAGE,
+      page: () => WaitingPage(),
+      binding: WaitingControllerBinding()
+    ),
+    GetPage(
+      name: _Paths.BATTLE_ACT,
+      page: () => BattleAct(),
+      binding: BattleControllerBinding()
+    ),
   ];
 }
