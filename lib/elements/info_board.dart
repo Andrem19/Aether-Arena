@@ -15,7 +15,7 @@ class InfoBoard extends StatelessWidget {
     AuthProviderController authCtrl = Get.find<AuthProviderController>();
     return GetBuilder<MainGameController>(builder: (controller) {
       return Container(
-        height: Get.height * 0.38,
+        height: Get.height * 0.37,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -55,8 +55,8 @@ class InfoBoard extends StatelessWidget {
                     child: controller.userProfile.value.avatar == ''
                         ? Image.asset(
                             'assets/default_avatar.jpg',
-                            width: Get.height * 0.14,
-                            height: Get.height * 0.14,
+                            width: Get.height * 0.13,
+                            height: Get.height * 0.13,
                           )
                         : Image.network(
                             controller.userProfile.value.avatar,

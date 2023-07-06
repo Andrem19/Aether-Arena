@@ -24,7 +24,7 @@ class _GeneralMenuState extends State<GeneralMenu> {
   Widget build(BuildContext context) {
     return GetBuilder<AuthProviderController>(
       builder: (controller) {
-        return Scaffold(
+        return const Scaffold(
             body: MenuElement());
       },
     );

@@ -101,9 +101,6 @@ class AuthProviderController extends GetxController {
           'nickWasChanged': 0,
           'expirience': 1,
           'isUserInGame': false,
-          'isAnybodyAscMe': false,
-          'whoInviteMeToPlay': '',
-          'theGameIdInviteMe': '',
           'wantToPlay': true,
           'blackList': [],
         });
@@ -114,6 +111,7 @@ class AuthProviderController extends GetxController {
           'myHistory': [],
           'uid': userCredential.user!.uid,
         });
+        // createMeetPoint(userCredential.user!.uid);
         Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
           content: Text(
               'Please verify your email, and then you can login with your credentials'),
@@ -150,6 +148,17 @@ class AuthProviderController extends GetxController {
         backgroundColor: Colors.red,
       ));
     }
+  }
+
+  void createMeetPoint(String uid) async {
+    await firebaseFirestore
+        .collection('meetPoint')
+        .doc(uid)
+        .set({
+      'isAnybodyAscMe': false,
+      'whoInviteMeToPlay': '',
+      'theGameIdInviteMe': '',
+    });
   }
 
   Future<bool> chekNameExist(String name) async {
@@ -206,9 +215,6 @@ class AuthProviderController extends GetxController {
         nickWasChanged: data['nickWasChanged'],
         expirience: data['expirience'],
         isUserInGame: data['isUserInGame'],
-        isAnybodyAscMe: data['isAnybodyAscMe'],
-        whoInviteMeToPlay: data['whoInviteMeToPlay'],
-        theGameIdInviteMe: data['theGameIdInviteMe'],
         wantToPlay: data['wantToPlay'],
       );
     }

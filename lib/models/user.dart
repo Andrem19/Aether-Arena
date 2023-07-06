@@ -16,9 +16,6 @@ class UserProfile {
   int nickWasChanged;
   int expirience;
   bool isUserInGame;
-  bool isAnybodyAscMe;
-  String whoInviteMeToPlay;
-  String theGameIdInviteMe;
   bool wantToPlay;
   UserProfile({
     required this.isLoaded,
@@ -31,9 +28,6 @@ class UserProfile {
     required this.nickWasChanged,
     required this.expirience,
     required this.isUserInGame,
-    required this.isAnybodyAscMe,
-    required this.whoInviteMeToPlay,
-    required this.theGameIdInviteMe,
     required this.wantToPlay,
   });
   static UserProfile getEmpty() {
@@ -48,9 +42,6 @@ class UserProfile {
         nickWasChanged: 0,
         expirience: 0,
         isUserInGame: true,
-        isAnybodyAscMe: false,
-        theGameIdInviteMe: '',
-        whoInviteMeToPlay: '',
         wantToPlay: true);
   }
 
@@ -65,9 +56,6 @@ class UserProfile {
     int? nickWasChanged,
     int? expirience,
     bool? isUserInGame,
-    bool? isAnybodyAscMe,
-    String? whoInviteMeToPlay,
-    String? theGameIdInviteMe,
     bool? wantToPlay,
   }) {
     return UserProfile(
@@ -81,9 +69,6 @@ class UserProfile {
       nickWasChanged: nickWasChanged ?? this.nickWasChanged,
       expirience: expirience ?? this.expirience,
       isUserInGame: isUserInGame ?? this.isUserInGame,
-      isAnybodyAscMe: isAnybodyAscMe ?? this.isAnybodyAscMe,
-      whoInviteMeToPlay: whoInviteMeToPlay ?? this.whoInviteMeToPlay,
-      theGameIdInviteMe: theGameIdInviteMe ?? this.theGameIdInviteMe,
       wantToPlay: wantToPlay ?? this.wantToPlay,
     );
   }
@@ -100,9 +85,6 @@ class UserProfile {
       'nickWasChanged': nickWasChanged,
       'expirience': expirience,
       'isUserInGame': isUserInGame,
-      'isAnybodyAscMe': isAnybodyAscMe,
-      'whoInviteMeToPlay': whoInviteMeToPlay,
-      'theGameIdInviteMe': theGameIdInviteMe,
       'wantToPlay': wantToPlay,
     };
   }
@@ -119,9 +101,6 @@ class UserProfile {
       nickWasChanged: map['nickWasChanged'] as int,
       expirience: map['expirience'] as int,
       isUserInGame: map['isUserInGame'] as bool,
-      isAnybodyAscMe: map['isAnybodyAscMe'] as bool,
-      whoInviteMeToPlay: map['whoInviteMeToPlay'] as String,
-      theGameIdInviteMe: map['theGameIdInviteMe'] as String,
       wantToPlay: map['wantToPlay'] as bool,
     );
   }
@@ -133,7 +112,7 @@ class UserProfile {
 
   @override
   String toString() {
-    return 'UserProfile(isLoaded: $isLoaded, uid: $uid, email: $email, userName: $userName, personalSettings: $personalSettings, mySet: $mySet, avatar: $avatar, nickWasChanged: $nickWasChanged, expirience: $expirience, isUserInGame: $isUserInGame, isAnybodyAscMe: $isAnybodyAscMe, whoInviteMeToPlay: $whoInviteMeToPlay, theGameIdInviteMe: $theGameIdInviteMe, wantToPlay: $wantToPlay)';
+    return 'UserProfile(isLoaded: $isLoaded, uid: $uid, email: $email, userName: $userName, personalSettings: $personalSettings, mySet: $mySet, avatar: $avatar, nickWasChanged: $nickWasChanged, expirience: $expirience, isUserInGame: $isUserInGame, wantToPlay: $wantToPlay)';
   }
 
   @override
@@ -151,9 +130,6 @@ class UserProfile {
       other.nickWasChanged == nickWasChanged &&
       other.expirience == expirience &&
       other.isUserInGame == isUserInGame &&
-      other.isAnybodyAscMe == isAnybodyAscMe &&
-      other.whoInviteMeToPlay == whoInviteMeToPlay &&
-      other.theGameIdInviteMe == theGameIdInviteMe &&
       other.wantToPlay == wantToPlay;
   }
 
@@ -169,9 +145,6 @@ class UserProfile {
       nickWasChanged.hashCode ^
       expirience.hashCode ^
       isUserInGame.hashCode ^
-      isAnybodyAscMe.hashCode ^
-      whoInviteMeToPlay.hashCode ^
-      theGameIdInviteMe.hashCode ^
       wantToPlay.hashCode;
   }
 }

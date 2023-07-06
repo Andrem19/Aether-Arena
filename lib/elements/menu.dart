@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:the_test_naruto_arena/controllers/auth_provider.dart';
 import 'package:the_test_naruto_arena/controllers/main_game_controller.dart';
 import 'package:the_test_naruto_arena/controllers/routing/app_pages.dart';
 import 'package:the_test_naruto_arena/elements/info_board.dart';
@@ -14,7 +13,6 @@ class MenuElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var authCont = Get.find<AuthProviderController>();
     return GetBuilder<MainGameController>(builder: (controller) {
       return SafeArea(
         child: Center(
@@ -25,6 +23,7 @@ class MenuElement extends StatelessWidget {
               InfoBoard(),
               Line.getLine(),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(controller.userProfile.value.wantToPlay
                       ? 'I agree to receive invitations to the game'
@@ -43,6 +42,10 @@ class MenuElement extends StatelessWidget {
               MenuButton(
                 title: 'Settings',
                 onTap: () => Get.toNamed(Routes.SETTINGS),
+              ),
+              MenuButton(
+                title: 'Battle Test',
+                onTap: () => Get.toNamed(Routes.BATTLE_ACT),
               ),
             ],
           ),

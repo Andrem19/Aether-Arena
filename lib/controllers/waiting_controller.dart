@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:the_test_naruto_arena/models/account_player_data.dart';
 import 'package:uuid/uuid.dart';
 
 import '../keys.dart';
@@ -31,7 +32,7 @@ class WaitingController extends GetxController {
         await _addPlayerToList(mainContr.gameType);
 
         await firebaseFirestore
-            .collection('users')
+            .collection('meetPoint')
             .doc(mainContr.playerWhoIInvite_ID)
             .update({
           'isAnybodyAscMe': true,
@@ -77,6 +78,7 @@ class WaitingController extends GetxController {
           .update({
         'PlayerB_uid': mainContr.userProfile.value.uid,
         'PlayerB_Name': mainContr.userProfile.value.userName,
+        'PlayerB_Avatar': mainContr.userProfile.value.avatar,
         'PlayerB_ready': true,
         'status': 'game'
       });
@@ -89,14 +91,19 @@ class WaitingController extends GetxController {
 
   Future<void> _addPlayerToList(GameType type) async {
     int whoseMove = Random().nextInt(2);
+    var accData = AccountPlayerData(
+        name: mainContr.userProfile.value.userName,
+        avatar: mainContr.userProfile.value.avatar,
+        rank: mainContr.getRank(),
+        level: mainContr.getLevel()['level']!);
     try {
       var doc = await firebaseFirestore.collection('battles').add({
         'game_id': mainContr.curentGameId,
         'game_type': mainContr.gameType.name,
         'PlayerA_uid': '',
         'PlayerB_uid': '',
-        'PlayerA_Name': '',
-        'PlayerB_Name': '',
+        'PlayerA_accData': accData.toJson(),
+        'PlayerB_accData': '',
         'status': 'searching',
         'IcantPlay': false,
         'PlayerA_ready': false,

@@ -39,6 +39,7 @@ class MainGameController extends GetxController {
       Character char = characters[i];
       characters.add(char);
     }
+    setUpListner();
     super.onInit();
   }
 
@@ -379,7 +380,7 @@ class MainGameController extends GetxController {
 
   Future<void> setUpListner() async {
     snapshots = FirebaseFirestore.instance
-        .collection('users')
+        .collection('meetPoint')
         .doc(userProfile.value.uid)
         .snapshots();
     listner = snapshots.listen((data) {
@@ -388,7 +389,7 @@ class MainGameController extends GetxController {
       String theGameIdInviteMe = data['theGameIdInviteMe'];
       if (isAnybodyAscMe) {
         firebaseFirestore
-            .collection('users')
+            .collection('meetPoint')
             .doc(userProfile.value.uid)
             .update({
           'isAnybodyAscMe': false,
