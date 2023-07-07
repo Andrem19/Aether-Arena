@@ -5,14 +5,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/auth_provider.dart';
+import 'package:the_test_naruto_arena/data/struct.dart';
+import 'package:the_test_naruto_arena/models/char_in_battle.dart';
 import 'package:the_test_naruto_arena/models/history_battle.dart';
-import 'package:the_test_naruto_arena/services/read_desrialize_json.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:file_picker/file_picker.dart';
 import 'package:uuid/uuid.dart';
 
+import '../data/characters.dart';
 import '../keys.dart';
-import '../models/character.dart';
+import '../models/skill.dart';
 import '../models/user.dart';
 import '../widgets/custom_text_field.dart';
 import 'routing/app_pages.dart';
@@ -20,7 +22,7 @@ import 'routing/app_pages.dart';
 class MainGameController extends GetxController {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   late Stream<DocumentSnapshot<Map<String, dynamic>>> snapshots;
-  late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> listner;
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? listner;
   Uuid uuid = Uuid();
   Rx<UserProfile> userProfile = UserProfile.getEmpty().obs;
   RxList<HistoryBattle> historyOfMyBattle = <HistoryBattle>[].obs;
@@ -31,15 +33,41 @@ class MainGameController extends GetxController {
   String curentGameId = '';
   String curentRole = 'A';
   String playerWhoIInvite_ID = '';
-  List<Character> characters = [];
+  List<CharInBattle> characters = [];
   @override
   void onInit() async {
-    characters = await ReadJson.readCharactersFromFile();
-    for (var i = 0; i < 21; i++) {
-      Character char = characters[i];
+    characters = await GetStruct.deserializeJsonToList(Chars.chars);
+    for (var i = 0; i < characters.length; i++) {
+      print(characters[i].id);
+      print(characters[i].name);
+      print(characters[i].condition);
+      for (var j = 0; j < characters[i].allSkills.length; j++) {
+        print(characters[i].allSkills[j].id);
+        print(characters[i].allSkills[j].name);
+        for (var p = 0; p < characters[i].allSkills[j].effects.length; p++) {
+          print(characters[i].allSkills[j].effects[p].id);
+          print(characters[i].allSkills[j].effects[p].name);
+        }
+      }
+    }
+    for (var i = 0; i < 15; i++) {
+      CharInBattle char = characters[i];
       characters.add(char);
     }
-    setUpListner();
+    _authProviderController.firebaseAuth.authStateChanges().listen((user) {
+      if (user != null) {
+        // User is authenticated, set up the listener if it is null
+        if (listner == null) {
+          setUpListner(user.uid);
+        }
+      } else {
+        // User is not authenticated, remove the listener if it is not null
+        if (listner != null) {
+          listner!.cancel();
+          listner = null;
+        }
+      }
+    });
     super.onInit();
   }
 
@@ -53,7 +81,7 @@ class MainGameController extends GetxController {
     _authProviderController = authProviderController;
   }
 
-  void showCardDialog(BuildContext context, Character character) {
+  void showCardDialog(BuildContext context, CharInBattle character) {
     showDialog(
       context: context,
       builder: (_) {
@@ -71,7 +99,7 @@ class MainGameController extends GetxController {
                       shrinkWrap: true,
                       crossAxisCount: 4,
                       children: List.generate(
-                        character.skills.length,
+                        character.allSkills.length,
                         (index) => GestureDetector(
                           onTapDown: (_) {
                             showDialog(
@@ -103,7 +131,7 @@ class MainGameController extends GetxController {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Image.asset(
-                                  getSkillImage(character.skills[index])),
+                                  getSkillImage(character.allSkills[index])),
                             ),
                           ),
                         ),
@@ -140,7 +168,7 @@ class MainGameController extends GetxController {
     );
   }
 
-  Character getCharacterFromId(int id) {
+  CharInBattle getCharacterFromId(int id) {
     return characters.firstWhere((element) => element.id == id,
         orElse: () => characters[0]);
   }
@@ -189,7 +217,7 @@ class MainGameController extends GetxController {
     }
   }
 
-  void infoBoardMySetOnAccept(int index, Character data) async {
+  void infoBoardMySetOnAccept(int index, CharInBattle data) async {
     if (userProfile.value.mySet.contains(data.id)) {
       return;
     }
@@ -291,7 +319,7 @@ class MainGameController extends GetxController {
     }
   }
 
-  bool isCardOpen(Character card) {
+  bool isCardOpen(CharInBattle card) {
     if (card.condition != null) {
       if (curentlevel < card.condition!.RequiredLevel) {
         return false;
@@ -378,20 +406,15 @@ class MainGameController extends GetxController {
     }
   }
 
-  Future<void> setUpListner() async {
-    snapshots = FirebaseFirestore.instance
-        .collection('meetPoint')
-        .doc(userProfile.value.uid)
-        .snapshots();
+  Future<void> setUpListner(String uid) async {
+    snapshots =
+        FirebaseFirestore.instance.collection('meetPoint').doc(uid).snapshots();
     listner = snapshots.listen((data) {
       bool isAnybodyAscMe = data['isAnybodyAscMe'];
       String whoAskMe = data['whoInviteMeToPlay'];
       String theGameIdInviteMe = data['theGameIdInviteMe'];
       if (isAnybodyAscMe) {
-        firebaseFirestore
-            .collection('meetPoint')
-            .doc(userProfile.value.uid)
-            .update({
+        firebaseFirestore.collection('meetPoint').doc(uid).update({
           'isAnybodyAscMe': false,
         });
         changeStatusInGame(true);

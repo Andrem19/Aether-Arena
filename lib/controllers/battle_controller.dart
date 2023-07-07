@@ -6,85 +6,93 @@ import 'package:get/get.dart';
 import 'main_game_controller.dart';
 
 class BattleController extends GetxController {
-  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-  MainGameController mainContr = Get.find<MainGameController>();
-  late Stream<DocumentSnapshot<Map<String, dynamic>>> snapshots;
-  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? listner;
+  static const int timeOfMove = 20;
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  final MainGameController _mainContr = Get.find<MainGameController>();
+  
+  late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> _listener;
   Timer? _timer;
-  RxInt timerValue = 0.obs;
-  RxString WhosMove = ''.obs;
+  
+  final RxInt timerValue = timeOfMove.obs;
+  final RxString whoIsMove = ''.obs;
+  
   String currentGameId = '';
   String myRole = '';
-
+  
   @override
   void onInit() async {
-    await setUpVars();
-    startListner();
+    await _setUpVars();
+    _startListener();
     super.onInit();
   }
 
   @override
   void onClose() {
-    updatePlayer_ready();
-    mainContr.deleteGameInstant();
+    _updatePlayerReady();
+    _mainContr.deleteGameInstant();
+    _timer?.cancel();
     super.onClose();
   }
 
-  Future<void> setUpVars() async {
-    var doc = await firebaseFirestore
+  Future<void> _setUpVars() async {
+    final doc = await _firebaseFirestore
         .collection('battles')
-        .doc(mainContr.curentGameId)
+        .doc(_mainContr.curentGameId)
         .get();
-    var data = doc.data();
-    WhosMove.value = data!['WhosMove'];
-    currentGameId = mainContr.curentGameId;
-    myRole = mainContr.curentRole;
-    timerValue.value = myRole == WhosMove.value ? 20 : 0;
-    if (WhosMove.value == myRole) {
-      startTimerMove();
+    final data = doc.data();
+    whoIsMove.value = data!['WhosMove'];
+    currentGameId = _mainContr.curentGameId;
+    myRole = _mainContr.curentRole;
+    timerValue.value = timeOfMove;
+    if (whoIsMove.value == myRole) {
+      _startTimerMove();
     }
   }
 
-  void startListner() {
-    snapshots = FirebaseFirestore.instance
+  void _startListener() {
+    final snapshots = _firebaseFirestore
         .collection('battles')
         .doc(currentGameId)
         .snapshots();
-    listner = snapshots.listen((snapshot) {
+    _listener = snapshots.listen((snapshot) {
       if (snapshot.exists) {
-        var data = snapshot.data();
-        WhosMove.value = data!['WhosMove'];
-        if (WhosMove.value == myRole && timerValue.value == 0) {
-          timerValue.value = 20;
-          startTimerMove();
+        final data = snapshot.data();
+        whoIsMove.value = data!['WhosMove'];
+        if (whoIsMove.value == myRole && _timer == null) {
+          timerValue.value = timeOfMove;
+          _startTimerMove();
+        }
+        if (whoIsMove.value != myRole) {
+          timerValue.value = timeOfMove;
+          _timer?.cancel();
+          _timer = null;
         }
       }
     });
   }
 
-  void updatePlayer_ready() async {
-    await firebaseFirestore.collection('battles').doc(currentGameId).update({
+  Future<void> _updatePlayerReady() async {
+    await _firebaseFirestore.collection('battles').doc(currentGameId).update({
       'Player${myRole}_ready': false,
     });
   }
 
-  void startTimerMove() {
+  void _startTimerMove() {
     _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
-      if (timerValue.value < 0) {
-        timerValue.value = 20;
-      }
       timerValue.value--;
-      print(timerValue.value);
-      if (timerValue == 1) {
-        setUpNxtMove();
-        timerValue.value = 0;
+      update();
+      if (timerValue == 0) {
+        timerValue.value = timeOfMove;
         _timer?.cancel();
+        _setUpNextMove();
+        update();
       }
     });
   }
 
-  void setUpNxtMove() async {
-    await firebaseFirestore.collection('battles').doc(currentGameId).update({
+  Future<void> _setUpNextMove() async {
+    whoIsMove.value = myRole == 'A' ? 'B' : 'A';
+    await _firebaseFirestore.collection('battles').doc(currentGameId).update({
       'WhosMove': myRole == 'A' ? 'B' : 'A',
     });
   }

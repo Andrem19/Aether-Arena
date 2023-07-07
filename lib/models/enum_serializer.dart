@@ -46,7 +46,7 @@ class EnumSerializer {
       case 'None':
         return PersistenceType.None;
       default:
-        throw ArgumentError('Invalid PersistenceType string value: $value');
+        return PersistenceType.None;
     }
   }
 
@@ -61,7 +61,7 @@ class EnumSerializer {
       case PersistenceType.None:
         return 'None';
       default:
-        throw ArgumentError('Invalid PersistenceType value: $type');
+        return 'None';
     }
   }
 
@@ -74,7 +74,7 @@ class EnumSerializer {
       case Distance.None:
         return 'None';
       default:
-        throw ArgumentError('Invalid Distance value');
+        return 'None';
     }
   }
 
@@ -87,7 +87,7 @@ class EnumSerializer {
       case 'none':
         return Distance.None;
       default:
-        throw ArgumentError('Invalid Distance string');
+        return Distance.None;
     }
   }
 
@@ -224,8 +224,10 @@ class EnumSerializer {
         return EnergyEffect.Add;
       case 'None':
         return EnergyEffect.None;
+      case '':
+        return EnergyEffect.None;
       default:
-        throw ArgumentError('Invalid energy effect: $effect');
+        return EnergyEffect.None;
     }
   }
 
@@ -272,8 +274,10 @@ class EnumSerializer {
         return Target.RandomEnemyTarget;
       case 'None':
         return Target.None;
+      case '':
+        return Target.None;
       default:
-        throw ArgumentError('Invalid target string: $str');
+        return Target.None;;
     }
   }
 

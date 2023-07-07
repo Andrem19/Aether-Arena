@@ -7,7 +7,6 @@ import 'enums.dart';
 class Effect {
   int id;
   String name;
-  String img;
   bool randomValue;
   List<int> ifRandomFromTo;
   int value;
@@ -26,7 +25,6 @@ class Effect {
   Effect({
     required this.id,
     required this.name,
-    required this.img,
     required this.randomValue,
     required this.ifRandomFromTo,
     required this.value,
@@ -46,7 +44,6 @@ class Effect {
   return Effect(
     id: 0,
     name: 'null',
-    img: 'null',
     randomValue: false,
     ifRandomFromTo: [],
     value: 0,
@@ -73,7 +70,6 @@ class Effect {
     return Effect(
       id: json['id'],
       name: json['name'],
-      img: json['img'],
       randomValue: json['randomValue'],
       ifRandomFromTo: List<int>.from(json['ifRandomFromTo']),
       value: json['value'],
@@ -95,7 +91,6 @@ class Effect {
   Map<String, dynamic> toMap() => {
         'id': id,
         'name': name,
-        'img': img,
         'randomValue': randomValue,
         'ifRandomFromTo': ifRandomFromTo,
         'value': value,

@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+
 import 'package:the_test_naruto_arena/models/enum_serializer.dart';
 
 import 'effect.dart';
@@ -10,15 +11,21 @@ import 'enums.dart';
 class Skill {
   int id;
   String name;
+  String description;
   String img;
-  List<Energy> requiredEnergy;
+  bool replaceable;
+  List<int> replace;
+  Map<Energy, int> requiredEnergy;
   int cooldownValue;
   int cooldown;
   List<Effect> effects;
   Skill({
     required this.id,
     required this.name,
+    required this.description,
     required this.img,
+    required this.replaceable,
+    required this.replace,
     required this.requiredEnergy,
     required this.cooldownValue,
     required this.cooldown,
@@ -28,8 +35,11 @@ class Skill {
     return Skill(
       id: 0,
       name: '',
+      description: '',
       img: '',
-      requiredEnergy: [],
+      replaceable: false,
+      replace: [],
+      requiredEnergy: {},
       cooldownValue: 0,
       cooldown: 0,
       effects: [],
@@ -39,8 +49,11 @@ class Skill {
   Skill copyWith({
     int? id,
     String? name,
+    String? description,
     String? img,
-    List<Energy>? requiredEnergy,
+    bool? replaceable,
+    List<int>? replace,
+    Map<Energy, int>? requiredEnergy,
     int? cooldownValue,
     int? cooldown,
     List<Effect>? effects,
@@ -48,7 +61,10 @@ class Skill {
     return Skill(
       id: id ?? this.id,
       name: name ?? this.name,
+      description: description ?? this.description,
       img: img ?? this.img,
+      replaceable: replaceable ?? this.replaceable,
+      replace: replace ?? this.replace,
       requiredEnergy: requiredEnergy ?? this.requiredEnergy,
       cooldownValue: cooldownValue ?? this.cooldownValue,
       cooldown: cooldown ?? this.cooldown,
@@ -60,8 +76,11 @@ class Skill {
     return <String, dynamic>{
       'id': id,
       'name': name,
+      'description': description,
       'img': img,
-      'requiredEnergy': requiredEnergy.map((x) => EnumSerializer.energyToString(x)).toList(),
+      'replaceable': replaceable,
+      'replace': replace,
+      'requiredEnergy': requiredEnergy,
       'cooldownValue': cooldownValue,
       'cooldown': cooldown,
       'effects': effects.map((x) => x.toMap()).toList(),
@@ -72,21 +91,25 @@ class Skill {
     return Skill(
       id: map['id'] as int,
       name: map['name'] as String,
+      description: map['description'] as String,
       img: map['img'] as String,
-      requiredEnergy: List<Energy>.from((map['requiredEnergy'] as List<dynamic>).map<Energy>((x) => EnumSerializer.energyFromString(x.toString()))),
+      replaceable: map['replaceable'] as bool,
+      replace: List<int>.from((map['replace'] as List<int>)),
+      requiredEnergy: Map<Energy, int>.from((map['requiredEnergy'] as Map<Energy, int>)),
       cooldownValue: map['cooldownValue'] as int,
       cooldown: map['cooldown'] as int,
-      effects: List<Effect>.from((map['effects'] as List<dynamic>).map<Effect>((x) => Effect.fromMap(x as Map<String,dynamic>),),),
+      effects: List<Effect>.from((map['effects'] as List<int>).map<Effect>((x) => Effect.fromMap(x as Map<String,dynamic>),),),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Skill.fromJson(String source) => Skill.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Skill.fromJson(String source) =>
+      Skill.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'Skill(id: $id, name: $name, img: $img, requiredEnergy: $requiredEnergy, cooldownValue: $cooldownValue, cooldown: $cooldown, effects: $effects)';
+    return 'Skill(id: $id, name: $name, description: $description, img: $img, replaceable: $replaceable, replace: $replace, requiredEnergy: $requiredEnergy, cooldownValue: $cooldownValue, cooldown: $cooldown, effects: $effects)';
   }
 
   @override
@@ -96,8 +119,11 @@ class Skill {
     return 
       other.id == id &&
       other.name == name &&
+      other.description == description &&
       other.img == img &&
-      listEquals(other.requiredEnergy, requiredEnergy) &&
+      other.replaceable == replaceable &&
+      listEquals(other.replace, replace) &&
+      mapEquals(other.requiredEnergy, requiredEnergy) &&
       other.cooldownValue == cooldownValue &&
       other.cooldown == cooldown &&
       listEquals(other.effects, effects);
@@ -107,7 +133,10 @@ class Skill {
   int get hashCode {
     return id.hashCode ^
       name.hashCode ^
+      description.hashCode ^
       img.hashCode ^
+      replaceable.hashCode ^
+      replace.hashCode ^
       requiredEnergy.hashCode ^
       cooldownValue.hashCode ^
       cooldown.hashCode ^

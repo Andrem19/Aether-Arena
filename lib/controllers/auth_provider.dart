@@ -104,6 +104,7 @@ class AuthProviderController extends GetxController {
           'wantToPlay': true,
           'blackList': [],
         });
+        _mainGameController.userProfile.value.uid = userCredential.user!.uid;
         await firebaseFirestore
             .collection('history')
             .doc(userCredential.user!.uid)
@@ -111,7 +112,7 @@ class AuthProviderController extends GetxController {
           'myHistory': [],
           'uid': userCredential.user!.uid,
         });
-        // createMeetPoint(userCredential.user!.uid);
+        createMeetPoint(userCredential.user!.uid);
         Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
           content: Text(
               'Please verify your email, and then you can login with your credentials'),
@@ -151,10 +152,7 @@ class AuthProviderController extends GetxController {
   }
 
   void createMeetPoint(String uid) async {
-    await firebaseFirestore
-        .collection('meetPoint')
-        .doc(uid)
-        .set({
+    await firebaseFirestore.collection('meetPoint').doc(uid).set({
       'isAnybodyAscMe': false,
       'whoInviteMeToPlay': '',
       'theGameIdInviteMe': '',
