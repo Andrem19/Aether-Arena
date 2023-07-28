@@ -73,6 +73,9 @@ class Skill {
   }
 
   Map<String, dynamic> toMap() {
+    Map<String, int> requiredEnergyAsString = requiredEnergy.map(
+    (key, value) => MapEntry(EnumSerializer.energyToString(key), value)
+  );
     return <String, dynamic>{
       'id': id,
       'name': name,
@@ -80,7 +83,7 @@ class Skill {
       'img': img,
       'replaceable': replaceable,
       'replace': replace,
-      'requiredEnergy': requiredEnergy,
+      'requiredEnergy': requiredEnergyAsString,
       'cooldownValue': cooldownValue,
       'cooldown': cooldown,
       'effects': effects.map((x) => x.toMap()).toList(),
@@ -94,11 +97,13 @@ class Skill {
       description: map['description'] as String,
       img: map['img'] as String,
       replaceable: map['replaceable'] as bool,
-      replace: List<int>.from((map['replace'] as List<int>)),
-      requiredEnergy: Map<Energy, int>.from((map['requiredEnergy'] as Map<Energy, int>)),
+      replace: List<int>.from((map['replace'] as List<dynamic>)),
+      requiredEnergy: Map<Energy, int>.from((map['requiredEnergy'] as Map<dynamic, dynamic>).map(
+      (key, value) => MapEntry(EnumSerializer.energyFromString(key), value as int),
+    )),
       cooldownValue: map['cooldownValue'] as int,
       cooldown: map['cooldown'] as int,
-      effects: List<Effect>.from((map['effects'] as List<int>).map<Effect>((x) => Effect.fromMap(x as Map<String,dynamic>),),),
+      effects: List<Effect>.from((map['effects'] as List<dynamic>).map<Effect>((x) => Effect.fromMap(x as Map<String,dynamic>),),),
     );
   }
 

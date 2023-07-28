@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/routing/app_pages.dart';
+import 'package:the_test_naruto_arena/elements/shell.dart';
 import '../widgets/authbutton.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -9,8 +10,8 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
+    return Shell(
+        content: Center(
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(

@@ -13,6 +13,7 @@ import 'package:the_test_naruto_arena/elements/energybattle.dart';
 import 'package:the_test_naruto_arena/elements/infopanelBattle.dart';
 import 'package:the_test_naruto_arena/elements/nameinbattle.dart';
 import 'package:the_test_naruto_arena/elements/charinbattle.dart';
+import 'package:the_test_naruto_arena/elements/shell.dart';
 import 'package:the_test_naruto_arena/elements/skillwhileattached.dart';
 import 'package:the_test_naruto_arena/widgets/move_button.dart';
 
@@ -28,22 +29,23 @@ class BattleAct extends StatelessWidget {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
           overlays: SystemUiOverlay.values);
     }, builder: (controller) {
-      return Scaffold(
-          body: Center(
-            child: Container(
-              width: kIsWeb ? Get.width /3 : Get.width,
-              child: Column(
-                    children: [
+      double width = kIsWeb ? Get.width / 3 : Get.width;
+      return Shell(
+          content: Center(
+        child: Container(
+          width: kIsWeb ? Get.width / 3 : Get.width,
+          child: Column(
+            children: [
               Container(
-                height: Get.height * 0.31,
+                height: Get.height * 0.30,
                 child: Column(
                   children: [
-                    BattleName.getName('SomeLongReallyve'),
+                    BattleName.getName(controller.enemy_accData.name),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        AvatarInTheBattle.getAvatar('Test'),
+                        AvatarInTheBattle.getAvatar(controller.enemy_accData, width),
                         Column(
                           children: [
                             Row(
@@ -52,40 +54,43 @@ class BattleAct extends StatelessWidget {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    CharInBattle.getChar(),
+                                    CharInTheBattle.getChar(
+                                        controller.enemy_set[0], width),
                                     Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: List.generate(
                                             Random().nextInt(3),
                                             (index) =>
-                                                SkillWhileAtached.getSkill()))
+                                                SkillWhileAtached.getSkill(width)))
                                   ],
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    CharInBattle.getChar(),
+                                    CharInTheBattle.getChar(
+                                        controller.enemy_set[1], width),
                                     Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: List.generate(
                                             Random().nextInt(3),
                                             (index) =>
-                                                SkillWhileAtached.getSkill()))
+                                                SkillWhileAtached.getSkill(width)))
                                   ],
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    CharInBattle.getChar(),
+                                    CharInTheBattle.getChar(
+                                        controller.enemy_set[2], width),
                                     Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: List.generate(
                                             Random().nextInt(3),
                                             (index) =>
-                                                SkillWhileAtached.getSkill()))
+                                                SkillWhileAtached.getSkill(width)))
                                   ],
                                 ),
                               ],
@@ -109,8 +114,8 @@ class BattleAct extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            BattleName.getName('SomeName'),
-                            AvatarInTheBattle.getAvatar('Test'),
+                            BattleName.getName(controller.my_accData.name),
+                            AvatarInTheBattle.getAvatar(controller.my_accData, width),
                           ],
                         ),
                         Column(
@@ -124,7 +129,8 @@ class BattleAct extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Row(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
                                         Column(
@@ -134,22 +140,32 @@ class BattleAct extends StatelessWidget {
                                                 CrossAxisAlignment.start,
                                             children: List.generate(
                                                 Random().nextInt(3),
-                                                (index) =>
-                                                    SkillWhileAtached.getSkill())),
+                                                (index) => SkillWhileAtached
+                                                    .getSkill(width))),
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: [
-                                            BattleMySkill.getMySkill('Skill 4'),
-                                            BattleMySkill.getMySkill('Skill 3'),
-                                            BattleMySkill.getMySkill('Skill 2'),
-                                            BattleMySkill.getMySkill('Skill 1'),
-                                            ChoosenSkill.getChoosenSkill('skill')
+                                            BattleMySkill.getMySkill(controller
+                                                .my_set[0]
+                                                .getSkill(4), width),
+                                            BattleMySkill.getMySkill(controller
+                                                .my_set[0]
+                                                .getSkill(3), width),
+                                            BattleMySkill.getMySkill(controller
+                                                .my_set[0]
+                                                .getSkill(2), width),
+                                            BattleMySkill.getMySkill(controller
+                                                .my_set[0]
+                                                .getSkill(1), width),
+                                            ChoosenSkill.getChoosenSkill(
+                                                'skill', width)
                                           ],
                                         )
                                       ],
                                     ),
-                                    CharInBattle.getChar(),
+                                    CharInTheBattle.getChar(
+                                        controller.my_set[0], width),
                                   ],
                                 ),
                                 Column(
@@ -157,7 +173,8 @@ class BattleAct extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Row(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
                                         Column(
@@ -167,22 +184,32 @@ class BattleAct extends StatelessWidget {
                                                 CrossAxisAlignment.start,
                                             children: List.generate(
                                                 Random().nextInt(3),
-                                                (index) =>
-                                                    SkillWhileAtached.getSkill())),
+                                                (index) => SkillWhileAtached
+                                                    .getSkill(width))),
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: [
-                                            BattleMySkill.getMySkill('Skill 4'),
-                                            BattleMySkill.getMySkill('Skill 3'),
-                                            BattleMySkill.getMySkill('Skill 2'),
-                                            BattleMySkill.getMySkill('Skill 1'),
-                                            ChoosenSkill.getChoosenSkill('skill')
+                                            BattleMySkill.getMySkill(controller
+                                                .my_set[1]
+                                                .getSkill(4), width),
+                                            BattleMySkill.getMySkill(controller
+                                                .my_set[1]
+                                                .getSkill(3), width),
+                                            BattleMySkill.getMySkill(controller
+                                                .my_set[1]
+                                                .getSkill(2), width),
+                                            BattleMySkill.getMySkill(controller
+                                                .my_set[1]
+                                                .getSkill(1), width),
+                                            ChoosenSkill.getChoosenSkill(
+                                                'skill', width)
                                           ],
                                         )
                                       ],
                                     ),
-                                    CharInBattle.getChar(),
+                                    CharInTheBattle.getChar(
+                                        controller.my_set[1], width),
                                   ],
                                 ),
                                 Column(
@@ -190,7 +217,8 @@ class BattleAct extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Row(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
                                         Column(
@@ -200,22 +228,32 @@ class BattleAct extends StatelessWidget {
                                                 CrossAxisAlignment.start,
                                             children: List.generate(
                                                 Random().nextInt(3),
-                                                (index) =>
-                                                    SkillWhileAtached.getSkill())),
+                                                (index) => SkillWhileAtached
+                                                    .getSkill(width))),
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: [
-                                            BattleMySkill.getMySkill('Skill 4'),
-                                            BattleMySkill.getMySkill('Skill 3'),
-                                            BattleMySkill.getMySkill('Skill 2'),
-                                            BattleMySkill.getMySkill('Skill 1'),
-                                            ChoosenSkill.getChoosenSkill('skill')
+                                            BattleMySkill.getMySkill(controller
+                                                .my_set[2]
+                                                .getSkill(4), width),
+                                            BattleMySkill.getMySkill(controller
+                                                .my_set[2]
+                                                .getSkill(3), width),
+                                            BattleMySkill.getMySkill(controller
+                                                .my_set[2]
+                                                .getSkill(2), width),
+                                            BattleMySkill.getMySkill(controller
+                                                .my_set[2]
+                                                .getSkill(1), width),
+                                            ChoosenSkill.getChoosenSkill(
+                                                'skill', width)
                                           ],
                                         )
                                       ],
                                     ),
-                                    CharInBattle.getChar(),
+                                    CharInTheBattle.getChar(
+                                        controller.my_set[2], width),
                                   ],
                                 ),
                               ],
@@ -224,21 +262,21 @@ class BattleAct extends StatelessWidget {
                         ),
                       ],
                     ),
-                    BattleInfoPanel.getPanel(),
+                    BattleInfoPanel.getPanel(width),
                     EnergyBattle.getEnergy(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        MoveButton(),
+                        MoveButton(width: width),
                       ],
                     )
                   ],
                 ),
               )),
-                    ],
-                  ),
-            ),
-          ));
+            ],
+          ),
+        ),
+      ));
     });
   }
 }

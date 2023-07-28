@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/auth_provider.dart';
 import 'package:the_test_naruto_arena/screen/general_menu.dart';
 
+import '../elements/shell.dart';
 import '../widgets/custom_text_field.dart';
 
 class EmailPassScreen extends StatelessWidget {
@@ -12,8 +13,8 @@ class EmailPassScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AuthProviderController>(builder: (controller) {
-      return Scaffold(
-        body: Padding(
+      return Shell(
+        content: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Center(
             child: Column(

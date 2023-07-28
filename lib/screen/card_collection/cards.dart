@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/main_game_controller.dart';
+import 'package:the_test_naruto_arena/elements/shell.dart';
 
 import '../../elements/info_board.dart';
 import '../../elements/line_beetwen.dart';
@@ -10,8 +11,8 @@ class CardCollection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GetBuilder<MainGameController>(builder: (controller) {
+    return Shell(
+      content: GetBuilder<MainGameController>(builder: (controller) {
         return SafeArea(
           child: Column(
             children: [

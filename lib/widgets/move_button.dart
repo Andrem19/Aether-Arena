@@ -3,19 +3,20 @@ import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/battle_controller.dart';
 
 class MoveButton extends StatelessWidget {
-  const MoveButton({super.key});
+  double width;
+  MoveButton({super.key, required this.width});
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<BattleController>(
       builder: (controller) {
         return InkWell(
-          onTap: () {},
+          onTap: controller.timerValue.value == controller.timeOfMove? null : () {},
           child: Stack(
             alignment: Alignment.center,
             children: [
               Container(
-                width: Get.width / 2,
+                width: width / 2,
                 height: Get.height / 20,
                 decoration: BoxDecoration(
                   color: Colors.grey,
@@ -26,9 +27,9 @@ class MoveButton extends StatelessWidget {
                 left: 0,
                 child: Container(
                   height: Get.height / 20,
-                  width: Get.width /
+                  width: width /
                       2 *
-                      ((20.01 - controller.timerValue.value) / 20),
+                      ((21.01 - controller.timerValue.value) / 20),
                   decoration: BoxDecoration(
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(10),

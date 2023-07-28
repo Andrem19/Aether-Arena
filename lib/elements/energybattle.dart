@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class EnergyBattle {
   static Widget getEnergy() {
+    final double size = 12;
     return Row(
       children: [
         Spacer(),
@@ -10,15 +12,15 @@ class EnergyBattle {
           child: Row(
             children: [
               Container(
-                width: 13,
-                height: 13,
+                width: size,
+                height: size,
                 color: Colors.green,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 6),
                 child: Text('0'),
               )
-              ],
+            ],
           ),
         ),
         Padding(
@@ -26,15 +28,15 @@ class EnergyBattle {
           child: Row(
             children: [
               Container(
-                width: 13,
-                height: 13,
+                width: size,
+                height: size,
                 color: Colors.blueAccent,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 6),
                 child: Text('0'),
               )
-              ],
+            ],
           ),
         ),
         Padding(
@@ -42,15 +44,15 @@ class EnergyBattle {
           child: Row(
             children: [
               Container(
-                width: 13,
-                height: 13,
+                width: size,
+                height: size,
                 color: Colors.red,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 6),
                 child: Text('0'),
               )
-              ],
+            ],
           ),
         ),
         Padding(
@@ -58,15 +60,15 @@ class EnergyBattle {
           child: Row(
             children: [
               Container(
-                width: 13,
-                height: 13,
+                width: size,
+                height: size,
                 color: Colors.black,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 6),
                 child: Text('0'),
               )
-              ],
+            ],
           ),
         ),
         Padding(
@@ -74,15 +76,15 @@ class EnergyBattle {
           child: Row(
             children: [
               Container(
-                width: 13,
-                height: 13,
+                width: size,
+                height: size,
                 color: Colors.white,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 6),
                 child: Text('0'),
               )
-              ],
+            ],
           ),
         ),
         Spacer(),

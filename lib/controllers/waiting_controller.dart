@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/models/account_player_data.dart';
+import 'package:the_test_naruto_arena/models/enum_serializer.dart';
 import 'package:uuid/uuid.dart';
 
 import '../keys.dart';
@@ -72,14 +73,28 @@ class WaitingController extends GetxController {
     if (playerList.docs.isEmpty) {
       _addPlayerToList(mainContr.gameType);
     } else {
+      var accData = AccountPlayerData(
+        name: mainContr.userProfile.value.userName,
+        avatar: mainContr.userProfile.value.avatar,
+        rank: mainContr.getRank(),
+        level: mainContr.getLevel()['level']!);
       await FirebaseFirestore.instance
           .collection('battles')
           .doc(playerList.docs[0].id)
           .update({
         'PlayerB_uid': mainContr.userProfile.value.uid,
         'PlayerB_Name': mainContr.userProfile.value.userName,
-        'PlayerB_Avatar': mainContr.userProfile.value.avatar,
+        'PlayerB_accData': accData.toJson(),
         'PlayerB_ready': true,
+        'playerB_char_1': mainContr
+            .getCharacterFromId(mainContr.userProfile.value.mySet[0])
+            .toJson(),
+        'playerB_char_2': mainContr
+            .getCharacterFromId(mainContr.userProfile.value.mySet[1])
+            .toJson(),
+        'playerB_char_3': mainContr
+            .getCharacterFromId(mainContr.userProfile.value.mySet[2])
+            .toJson(),
         'status': 'game'
       });
       var data = playerList.docs[0].data();
@@ -99,7 +114,7 @@ class WaitingController extends GetxController {
     try {
       var doc = await firebaseFirestore.collection('battles').add({
         'game_id': mainContr.curentGameId,
-        'game_type': mainContr.gameType.name,
+        'game_type': EnumSerializer.GameTypetoString(mainContr.gameType),
         'PlayerA_uid': '',
         'PlayerB_uid': '',
         'PlayerA_accData': accData.toJson(),
@@ -109,9 +124,15 @@ class WaitingController extends GetxController {
         'PlayerA_ready': false,
         'PlayerB_ready': false,
         'WhosMove': whoseMove == 0 ? 'A' : 'B',
-        'playerA_char_1': CharInBattle.empty().toJson(),
-        'playerA_char_2': CharInBattle.empty().toJson(),
-        'playerA_char_3': CharInBattle.empty().toJson(),
+        'playerA_char_1': mainContr
+            .getCharacterFromId(mainContr.userProfile.value.mySet[0])
+            .toJson(),
+        'playerA_char_2': mainContr
+            .getCharacterFromId(mainContr.userProfile.value.mySet[1])
+            .toJson(),
+        'playerA_char_3': mainContr
+            .getCharacterFromId(mainContr.userProfile.value.mySet[2])
+            .toJson(),
         'playerB_char_1': CharInBattle.empty().toJson(),
         'playerB_char_2': CharInBattle.empty().toJson(),
         'playerB_char_3': CharInBattle.empty().toJson(),
@@ -121,6 +142,9 @@ class WaitingController extends GetxController {
       });
       mainContr.curentRole = 'A';
       mainContr.curentGameId = doc.id;
+      await firebaseFirestore.collection('battles').doc(doc.id).update({
+        'game_id': mainContr.curentGameId,
+      });
       startTimerGameAlive(doc.id);
       startGameStream(doc.id);
     } on FirebaseException catch (error) {

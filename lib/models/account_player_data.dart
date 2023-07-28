@@ -1,6 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
+import 'char_in_battle.dart';
+
 class AccountPlayerData {
   String name;
   String avatar;
@@ -12,6 +16,9 @@ class AccountPlayerData {
     required this.rank,
     required this.level,
   });
+  static AccountPlayerData empty() {
+    return AccountPlayerData(name: '', avatar: '', rank: '', level: 0);
+  }
 
   AccountPlayerData copyWith({
     String? name,
@@ -47,7 +54,8 @@ class AccountPlayerData {
 
   String toJson() => json.encode(toMap());
 
-  factory AccountPlayerData.fromJson(String source) => AccountPlayerData.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory AccountPlayerData.fromJson(String source) =>
+      AccountPlayerData.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {

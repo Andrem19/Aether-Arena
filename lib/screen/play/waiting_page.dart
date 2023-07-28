@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:the_test_naruto_arena/elements/shell.dart';
 
 import '../../controllers/waiting_controller.dart';
 
@@ -8,8 +9,8 @@ class WaitingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GetBuilder<WaitingController>(builder: (controller) {
+    return Shell(
+      content: GetBuilder<WaitingController>(builder: (controller) {
         return Center(
           child: Stack(
             children: [

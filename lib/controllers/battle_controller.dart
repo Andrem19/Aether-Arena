@@ -2,23 +2,30 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:the_test_naruto_arena/models/char_in_battle.dart';
 
+import '../models/account_player_data.dart';
 import 'main_game_controller.dart';
 
 class BattleController extends GetxController {
-  static const int timeOfMove = 20;
+  int timeOfMove = 21;
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final MainGameController _mainContr = Get.find<MainGameController>();
-  
+  AccountPlayerData my_accData = AccountPlayerData.empty();
+  AccountPlayerData enemy_accData = AccountPlayerData.empty();
+
+  List<CharInBattle> my_set = [CharInBattle.empty(), CharInBattle.empty(), CharInBattle.empty(),];
+  List<CharInBattle> enemy_set = [CharInBattle.empty(), CharInBattle.empty(), CharInBattle.empty(),];
+
   late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> _listener;
   Timer? _timer;
-  
-  final RxInt timerValue = timeOfMove.obs;
+
+  final RxInt timerValue = 21.obs;
   final RxString whoIsMove = ''.obs;
-  
+
   String currentGameId = '';
   String myRole = '';
-  
+
   @override
   void onInit() async {
     await _setUpVars();
@@ -35,6 +42,7 @@ class BattleController extends GetxController {
   }
 
   Future<void> _setUpVars() async {
+    myRole = _mainContr.curentRole;
     final doc = await _firebaseFirestore
         .collection('battles')
         .doc(_mainContr.curentGameId)
@@ -42,18 +50,35 @@ class BattleController extends GetxController {
     final data = doc.data();
     whoIsMove.value = data!['WhosMove'];
     currentGameId = _mainContr.curentGameId;
-    myRole = _mainContr.curentRole;
+    var A_set = [
+      CharInBattle.fromJson(data['playerA_char_1']),
+      CharInBattle.fromJson(data['playerA_char_2']),
+      CharInBattle.fromJson(data['playerA_char_3'])
+    ];
+    var B_set = [
+      CharInBattle.fromJson(data['playerB_char_1']),
+      CharInBattle.fromJson(data['playerB_char_2']),
+      CharInBattle.fromJson(data['playerB_char_3'])
+    ];
+    my_accData = myRole == 'A'
+        ? AccountPlayerData.fromJson(data['PlayerA_accData'])
+        : AccountPlayerData.fromJson(data['PlayerB_accData']);
+    enemy_accData = myRole == 'A'
+        ? AccountPlayerData.fromJson(data['PlayerB_accData'])
+        : AccountPlayerData.fromJson(data['PlayerA_accData']);
+    my_set = myRole == 'A' ? A_set : B_set;
+    enemy_set = myRole == 'A' ? B_set : A_set;
+
     timerValue.value = timeOfMove;
     if (whoIsMove.value == myRole) {
       _startTimerMove();
     }
+    update();
   }
 
   void _startListener() {
-    final snapshots = _firebaseFirestore
-        .collection('battles')
-        .doc(currentGameId)
-        .snapshots();
+    final snapshots =
+        _firebaseFirestore.collection('battles').doc(currentGameId).snapshots();
     _listener = snapshots.listen((snapshot) {
       if (snapshot.exists) {
         final data = snapshot.data();

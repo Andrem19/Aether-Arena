@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:the_test_naruto_arena/models/condition.dart';
 import 'package:the_test_naruto_arena/models/effect.dart';
+import 'package:the_test_naruto_arena/models/enums.dart';
 import 'package:the_test_naruto_arena/models/gameinstant.dart';
 import 'package:the_test_naruto_arena/models/skill.dart';
 
@@ -53,6 +54,21 @@ class CharInBattle {
     );
   }
 
+  Skill getSkill(int number) {
+    switch (number) {
+      case 1:
+        return allSkills.firstWhere((element) => element.id == currentSkill_1);
+      case 2:
+        return allSkills.firstWhere((element) => element.id == currentSkill_2);
+      case 3:
+        return allSkills.firstWhere((element) => element.id == currentSkill_3);
+      case 4:
+        return allSkills.firstWhere((element) => element.id == currentSkill_4);
+      default:
+        return allSkills.firstWhere((element) => element.id == currentSkill_1);
+    }
+  }
+
   CharInBattle copyWith({
     int? id,
     String? name,
@@ -95,7 +111,7 @@ class CharInBattle {
       'currentSkill_3': currentSkill_3,
       'currentSkill_4': currentSkill_4,
       'allSkills': allSkills.map((x) => x.toMap()).toList(),
-      'condition': condition!.toMap(),
+      'condition': condition == null ? 'null' : condition!.toMap(),
       'isOpen': isOpen,
     };
   }
@@ -106,13 +122,23 @@ class CharInBattle {
       name: map['name'] as String,
       img: map['img'] as String,
       health: map['health'] as int,
-      attachedEffects: List<Effect>.from((map['attachedEffects'] as List<int>).map<Effect>((x) => Effect.fromMap(x as Map<String,dynamic>),),),
+      attachedEffects: List<Effect>.from(
+        (map['attachedEffects'] as List<dynamic>).map<Effect>(
+          (x) => Effect.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
       currentSkill_1: map['currentSkill_1'] as int,
       currentSkill_2: map['currentSkill_2'] as int,
       currentSkill_3: map['currentSkill_3'] as int,
       currentSkill_4: map['currentSkill_4'] as int,
-      allSkills: List<Skill>.from((map['allSkills'] as List<int>).map<Skill>((x) => Skill.fromMap(x as Map<String,dynamic>),),),
-      condition: Condition.fromMap(map['condition'] as Map<String,dynamic>),
+      allSkills: List<Skill>.from(
+        (map['allSkills'] as List<dynamic>).map<Skill>(
+          (x) => Skill.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
+      condition: map['condition'] == 'null'
+          ? null
+          : Condition.fromMap(map['condition'] as Map<String, dynamic>),
       isOpen: map['isOpen'] as bool,
     );
   }
@@ -130,35 +156,34 @@ class CharInBattle {
   @override
   bool operator ==(covariant CharInBattle other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.id == id &&
-      other.name == name &&
-      other.img == img &&
-      other.health == health &&
-      listEquals(other.attachedEffects, attachedEffects) &&
-      other.currentSkill_1 == currentSkill_1 &&
-      other.currentSkill_2 == currentSkill_2 &&
-      other.currentSkill_3 == currentSkill_3 &&
-      other.currentSkill_4 == currentSkill_4 &&
-      listEquals(other.allSkills, allSkills) &&
-      other.condition == condition &&
-      other.isOpen == isOpen;
+
+    return other.id == id &&
+        other.name == name &&
+        other.img == img &&
+        other.health == health &&
+        listEquals(other.attachedEffects, attachedEffects) &&
+        other.currentSkill_1 == currentSkill_1 &&
+        other.currentSkill_2 == currentSkill_2 &&
+        other.currentSkill_3 == currentSkill_3 &&
+        other.currentSkill_4 == currentSkill_4 &&
+        listEquals(other.allSkills, allSkills) &&
+        other.condition == condition &&
+        other.isOpen == isOpen;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      name.hashCode ^
-      img.hashCode ^
-      health.hashCode ^
-      attachedEffects.hashCode ^
-      currentSkill_1.hashCode ^
-      currentSkill_2.hashCode ^
-      currentSkill_3.hashCode ^
-      currentSkill_4.hashCode ^
-      allSkills.hashCode ^
-      condition.hashCode ^
-      isOpen.hashCode;
+        name.hashCode ^
+        img.hashCode ^
+        health.hashCode ^
+        attachedEffects.hashCode ^
+        currentSkill_1.hashCode ^
+        currentSkill_2.hashCode ^
+        currentSkill_3.hashCode ^
+        currentSkill_4.hashCode ^
+        allSkills.hashCode ^
+        condition.hashCode ^
+        isOpen.hashCode;
   }
 }

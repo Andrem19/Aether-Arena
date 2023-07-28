@@ -1,3 +1,4 @@
+import '../controllers/main_game_controller.dart';
 import 'enums.dart';
 
 class EnumSerializer {
@@ -35,7 +36,7 @@ class EnumSerializer {
     }
   }
 
- static PersistenceType persistenceTypeFromString(String value) {
+  static PersistenceType persistenceTypeFromString(String value) {
     switch (value) {
       case 'Instant':
         return PersistenceType.Instant;
@@ -277,7 +278,8 @@ class EnumSerializer {
       case '':
         return Target.None;
       default:
-        return Target.None;;
+        return Target.None;
+        ;
     }
   }
 
@@ -308,6 +310,30 @@ class EnumSerializer {
         return 'Pure';
       default:
         return 'None';
+    }
+  }
+
+  static String GameTypetoString(GameType type) {
+    switch (type) {
+      case GameType.LadderBattle:
+        return 'LadderBattle';
+      case GameType.QuickBattle:
+        return 'QuickBattle';
+      case GameType.PrivateBattle:
+        return 'PrivateBattle';
+    }
+  }
+
+  static GameType GameTypefromString(String value) {
+    switch (value) {
+      case 'LadderBattle':
+        return GameType.LadderBattle;
+      case 'QuickBattle':
+        return GameType.QuickBattle;
+      case 'PrivateBattle':
+        return GameType.PrivateBattle;
+      default:
+        throw ArgumentError('Invalid GameType value: $value');
     }
   }
 }

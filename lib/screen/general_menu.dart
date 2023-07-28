@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/auth_provider.dart';
 import 'package:the_test_naruto_arena/controllers/main_game_controller.dart';
 import 'package:the_test_naruto_arena/elements/menu.dart';
+import 'package:the_test_naruto_arena/elements/shell.dart';
 
 class GeneralMenu extends StatefulWidget {
   const GeneralMenu({super.key});
@@ -22,11 +23,6 @@ class _GeneralMenuState extends State<GeneralMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AuthProviderController>(
-      builder: (controller) {
-        return const Scaffold(
-            body: MenuElement());
-      },
-    );
+    return Shell(content: MenuElement());
   }
 }
