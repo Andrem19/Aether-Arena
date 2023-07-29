@@ -5,8 +5,6 @@ import 'package:flutter/foundation.dart';
 
 import 'package:the_test_naruto_arena/models/condition.dart';
 import 'package:the_test_naruto_arena/models/effect.dart';
-import 'package:the_test_naruto_arena/models/enums.dart';
-import 'package:the_test_naruto_arena/models/gameinstant.dart';
 import 'package:the_test_naruto_arena/models/skill.dart';
 
 class CharInBattle {

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/models/account_player_data.dart';
 import 'package:the_test_naruto_arena/models/enum_serializer.dart';
+import 'package:the_test_naruto_arena/models/move.dart';
 import 'package:uuid/uuid.dart';
 
 import '../keys.dart';
@@ -136,8 +137,8 @@ class WaitingController extends GetxController {
         'playerB_char_1': CharInBattle.empty().toJson(),
         'playerB_char_2': CharInBattle.empty().toJson(),
         'playerB_char_3': CharInBattle.empty().toJson(),
-        'GameInfo_A': '',
-        'GameInfo_B': '',
+        'GameInfo_A': Move.empty().toJson(),
+        'GameInfo_B': Move.empty().toJson(),
         'date': Timestamp.now().seconds,
       });
       mainContr.curentRole = 'A';
