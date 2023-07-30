@@ -21,16 +21,13 @@ class BattleController extends GetxController {
   Move enemy_move = Move.empty();
   Focus focus = Focus.empty();
 
-  List<CharInBattle> my_set = [
-    CharInBattle.empty(),
-    CharInBattle.empty(),
-    CharInBattle.empty(),
-  ];
-  List<CharInBattle> enemy_set = [
-    CharInBattle.empty(),
-    CharInBattle.empty(),
-    CharInBattle.empty(),
-  ];
+  CharInBattle my_char_1 = CharInBattle.empty();
+  CharInBattle my_char_2 = CharInBattle.empty();
+  CharInBattle my_char_3 = CharInBattle.empty();
+
+  CharInBattle enemy_char_1 = CharInBattle.empty();
+  CharInBattle enemy_char_2 = CharInBattle.empty();
+  CharInBattle enemy_char_3 = CharInBattle.empty();
 
   late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> _listener;
   Timer? _timer;
@@ -65,24 +62,39 @@ class BattleController extends GetxController {
     final data = doc.data();
     whoIsMove.value = data!['WhosMove'];
     currentGameId = _mainContr.curentGameId;
-    var A_set = [
-      CharInBattle.fromJson(data['playerA_char_1']),
-      CharInBattle.fromJson(data['playerA_char_2']),
-      CharInBattle.fromJson(data['playerA_char_3'])
-    ];
-    var B_set = [
-      CharInBattle.fromJson(data['playerB_char_1']),
-      CharInBattle.fromJson(data['playerB_char_2']),
-      CharInBattle.fromJson(data['playerB_char_3'])
-    ];
+
+    var Achar_1 = CharInBattle.fromJson(data['playerA_char_1']);
+    var Achar_2 = CharInBattle.fromJson(data['playerA_char_2']);
+    var Achar_3 = CharInBattle.fromJson(data['playerA_char_3']);
+
+    var Bchar_1 = CharInBattle.fromJson(data['playerB_char_1']);
+    var Bchar_2 = CharInBattle.fromJson(data['playerB_char_2']);
+    var Bchar_3 = CharInBattle.fromJson(data['playerB_char_3']);
+
     my_accData = myRole == 'A'
         ? AccountPlayerData.fromJson(data['PlayerA_accData'])
         : AccountPlayerData.fromJson(data['PlayerB_accData']);
     enemy_accData = myRole == 'A'
         ? AccountPlayerData.fromJson(data['PlayerB_accData'])
         : AccountPlayerData.fromJson(data['PlayerA_accData']);
-    my_set = myRole == 'A' ? A_set : B_set;
-    enemy_set = myRole == 'A' ? B_set : A_set;
+
+    if (myRole == 'A') {
+      my_char_1 = Achar_1;
+      my_char_2 = Achar_2;
+      my_char_3 = Achar_3;
+
+      enemy_char_1 = Bchar_1;
+      enemy_char_2 = Bchar_2;
+      enemy_char_3 = Bchar_3;
+    } else {
+      my_char_1 = Bchar_1;
+      my_char_2 = Bchar_2;
+      my_char_3 = Bchar_3;
+
+      enemy_char_1 = Achar_1;
+      enemy_char_2 = Achar_2;
+      enemy_char_3 = Achar_3;
+    }
 
     timerValue.value = timeOfMove;
     if (whoIsMove.value == myRole) {
@@ -169,5 +181,19 @@ class BattleController extends GetxController {
     passFocusToTheMove();
   }
 
-  void passFocusToTheMove() {}
+  void passFocusToTheMove() {
+    if (focus.myCharId == my_char_1.id) {
+      my_move.char_1.skillId = focus.skill_id;
+      my_move.char_1.target = focus.target;
+      my_move.char_1.ifOneWho = focus.target_idIfOne;
+    } else if (focus.myCharId == my_char_2.id) {
+      my_move.char_2.skillId = focus.skill_id;
+      my_move.char_2.target = focus.target;
+      my_move.char_2.ifOneWho = focus.target_idIfOne;
+    } else if (focus.myCharId == my_char_3.id) {
+      my_move.char_3.skillId = focus.skill_id;
+      my_move.char_3.target = focus.target;
+      my_move.char_3.ifOneWho = focus.target_idIfOne;
+    }
+  }
 }

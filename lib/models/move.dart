@@ -21,9 +21,9 @@ class Move {
   static Move empty() {
     return Move(
       moveNumber: 0,
-      char_1: Hit(target: Target.None, ifOneWho: '', skill: Skill.getEmpty()),
-      char_2: Hit(target: Target.None, ifOneWho: '', skill: Skill.getEmpty()),
-      char_3: Hit(target: Target.None, ifOneWho: '', skill: Skill.getEmpty()),
+      char_1: Hit(target: Target.None, ifOneWho: 0, skillId: 0),
+      char_2: Hit(target: Target.None, ifOneWho: 0, skillId: 0),
+      char_3: Hit(target: Target.None, ifOneWho: 0, skillId: 0),
     );
   }
 
@@ -90,23 +90,23 @@ class Move {
 
 class Hit {
   Target target;
-  String ifOneWho;
-  Skill skill;
+  int ifOneWho;
+  int skillId;
   Hit({
     required this.target,
     required this.ifOneWho,
-    required this.skill,
+    required this.skillId,
   });
 
   Hit copyWith({
     Target? target,
-    String? ifOneWho,
-    Skill? skill,
+    int? ifOneWho,
+    int? skillId,
   }) {
     return Hit(
       target: target ?? this.target,
       ifOneWho: ifOneWho ?? this.ifOneWho,
-      skill: skill ?? this.skill,
+      skillId: skillId ?? this.skillId,
     );
   }
 
@@ -114,15 +114,15 @@ class Hit {
     return <String, dynamic>{
       'target': EnumSerializer.targetToString(target),
       'ifOneWho': ifOneWho,
-      'skill': skill.toMap(),
+      'skillId': skillId,
     };
   }
 
   factory Hit.fromMap(Map<String, dynamic> map) {
     return Hit(
       target: EnumSerializer.targetFromString(map['target']),
-      ifOneWho: map['ifOneWho'] as String,
-      skill: Skill.fromMap(map['skill'] as Map<String, dynamic>),
+      ifOneWho: map['ifOneWho'] as int,
+      skillId: map['skillId'] as int,
     );
   }
 
@@ -132,18 +132,18 @@ class Hit {
       Hit.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() =>
-      'Hit(target: $target, ifOneWho: $ifOneWho, skill: $skill)';
+  String toString() => 'Hit(target: $target, ifOneWho: $ifOneWho, skillId: $skillId)';
 
   @override
   bool operator ==(covariant Hit other) {
     if (identical(this, other)) return true;
-
-    return other.target == target &&
-        other.ifOneWho == ifOneWho &&
-        other.skill == skill;
+  
+    return 
+      other.target == target &&
+      other.ifOneWho == ifOneWho &&
+      other.skillId == skillId;
   }
 
   @override
-  int get hashCode => target.hashCode ^ ifOneWho.hashCode ^ skill.hashCode;
+  int get hashCode => target.hashCode ^ ifOneWho.hashCode ^ skillId.hashCode;
 }
