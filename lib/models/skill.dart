@@ -13,8 +13,6 @@ class Skill {
   String name;
   String description;
   String img;
-  bool replaceable;
-  List<int> replace;
   Map<Energy, int> requiredEnergy;
   int cooldownValue;
   int cooldown;
@@ -24,8 +22,6 @@ class Skill {
     required this.name,
     required this.description,
     required this.img,
-    required this.replaceable,
-    required this.replace,
     required this.requiredEnergy,
     required this.cooldownValue,
     required this.cooldown,
@@ -37,8 +33,6 @@ class Skill {
       name: '',
       description: '',
       img: '',
-      replaceable: false,
-      replace: [],
       requiredEnergy: {},
       cooldownValue: 0,
       cooldown: 0,
@@ -51,8 +45,6 @@ class Skill {
     String? name,
     String? description,
     String? img,
-    bool? replaceable,
-    List<int>? replace,
     Map<Energy, int>? requiredEnergy,
     int? cooldownValue,
     int? cooldown,
@@ -63,8 +55,6 @@ class Skill {
       name: name ?? this.name,
       description: description ?? this.description,
       img: img ?? this.img,
-      replaceable: replaceable ?? this.replaceable,
-      replace: replace ?? this.replace,
       requiredEnergy: requiredEnergy ?? this.requiredEnergy,
       cooldownValue: cooldownValue ?? this.cooldownValue,
       cooldown: cooldown ?? this.cooldown,
@@ -81,8 +71,6 @@ class Skill {
       'name': name,
       'description': description,
       'img': img,
-      'replaceable': replaceable,
-      'replace': replace,
       'requiredEnergy': requiredEnergyAsString,
       'cooldownValue': cooldownValue,
       'cooldown': cooldown,
@@ -96,11 +84,9 @@ class Skill {
       name: map['name'] as String,
       description: map['description'] as String,
       img: map['img'] as String,
-      replaceable: map['replaceable'] as bool,
-      replace: List<int>.from((map['replace'] as List<dynamic>)),
       requiredEnergy: Map<Energy, int>.from((map['requiredEnergy'] as Map<dynamic, dynamic>).map(
       (key, value) => MapEntry(EnumSerializer.energyFromString(key), value as int),
-    )),
+      )),
       cooldownValue: map['cooldownValue'] as int,
       cooldown: map['cooldown'] as int,
       effects: List<Effect>.from((map['effects'] as List<dynamic>).map<Effect>((x) => Effect.fromMap(x as Map<String,dynamic>),),),
@@ -114,7 +100,7 @@ class Skill {
 
   @override
   String toString() {
-    return 'Skill(id: $id, name: $name, description: $description, img: $img, replaceable: $replaceable, replace: $replace, requiredEnergy: $requiredEnergy, cooldownValue: $cooldownValue, cooldown: $cooldown, effects: $effects)';
+    return 'Skill(id: $id, name: $name, description: $description, img: $img, requiredEnergy: $requiredEnergy, cooldownValue: $cooldownValue, cooldown: $cooldown, effects: $effects)';
   }
 
   @override
@@ -126,8 +112,6 @@ class Skill {
       other.name == name &&
       other.description == description &&
       other.img == img &&
-      other.replaceable == replaceable &&
-      listEquals(other.replace, replace) &&
       mapEquals(other.requiredEnergy, requiredEnergy) &&
       other.cooldownValue == cooldownValue &&
       other.cooldown == cooldown &&
@@ -140,8 +124,6 @@ class Skill {
       name.hashCode ^
       description.hashCode ^
       img.hashCode ^
-      replaceable.hashCode ^
-      replace.hashCode ^
       requiredEnergy.hashCode ^
       cooldownValue.hashCode ^
       cooldown.hashCode ^

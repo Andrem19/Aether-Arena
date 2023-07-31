@@ -8,6 +8,7 @@ import '../models/account_player_data.dart';
 import '../models/enums.dart';
 import '../models/focus.dart';
 import '../models/move.dart';
+import '../models/skill.dart';
 import 'main_game_controller.dart';
 
 class BattleController extends GetxController {

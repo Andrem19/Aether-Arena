@@ -7,16 +7,82 @@ class CharInTheBattle {
   static Widget getChar(CharInBattle char, double width) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 3),
-      child: Container(
-        width: width * 0.18,
-        height: width * 0.18,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black,
-            width: 2,
+      child: Stack(
+        children: [
+          Container(
+            width: width * 0.18,
+            height: width * 0.18,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black,
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.green.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Image.asset(char.img),
           ),
-        ),
-        child: Image.asset(char.img),),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Stack(
+              children: [
+                Container(
+                  width: width * 0.18,
+                  height: width * 0.03,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.lightGreen.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: char.health / 100 * width * 0.18,
+                  height: width * 0.03,
+                  decoration: BoxDecoration(
+                    color: Colors.lightGreen,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.lightGreen.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    "${char.health}%",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
+

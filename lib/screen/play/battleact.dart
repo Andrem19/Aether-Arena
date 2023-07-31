@@ -146,20 +146,20 @@ class BattleAct extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: [
-                                            BattleMySkill.getMySkill(controller
+                                            BattleMySkill.getMySkill(1,controller
                                                 .my_char_1
                                                 .getSkill(4), width),
-                                            BattleMySkill.getMySkill(controller
+                                            BattleMySkill.getMySkill(1,controller
                                                 .my_char_1
                                                 .getSkill(3), width),
-                                            BattleMySkill.getMySkill(controller
+                                            BattleMySkill.getMySkill(1,controller
                                                 .my_char_1
                                                 .getSkill(2), width),
-                                            BattleMySkill.getMySkill(controller
+                                            BattleMySkill.getMySkill(1,controller
                                                 .my_char_1
                                                 .getSkill(1), width),
                                             ChoosenSkill.getChoosenSkill(
-                                                'skill', width)
+                                                1, width)
                                           ],
                                         )
                                       ],
@@ -190,20 +190,20 @@ class BattleAct extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: [
-                                            BattleMySkill.getMySkill(controller
+                                            BattleMySkill.getMySkill(2,controller
                                                 .my_char_2
                                                 .getSkill(4), width),
-                                            BattleMySkill.getMySkill(controller
+                                            BattleMySkill.getMySkill(2,controller
                                                 .my_char_2
                                                 .getSkill(3), width),
-                                            BattleMySkill.getMySkill(controller
+                                            BattleMySkill.getMySkill(2,controller
                                                 .my_char_2
                                                 .getSkill(2), width),
-                                            BattleMySkill.getMySkill(controller
+                                            BattleMySkill.getMySkill(2,controller
                                                 .my_char_2
                                                 .getSkill(1), width),
                                             ChoosenSkill.getChoosenSkill(
-                                                'skill', width)
+                                                2, width)
                                           ],
                                         )
                                       ],
@@ -234,20 +234,20 @@ class BattleAct extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: [
-                                            BattleMySkill.getMySkill(controller
+                                            BattleMySkill.getMySkill(3,controller
                                                 .my_char_3
                                                 .getSkill(4), width),
-                                            BattleMySkill.getMySkill(controller
+                                            BattleMySkill.getMySkill(3,controller
                                                 .my_char_3
                                                 .getSkill(3), width),
-                                            BattleMySkill.getMySkill(controller
+                                            BattleMySkill.getMySkill(3,controller
                                                 .my_char_3
                                                 .getSkill(2), width),
-                                            BattleMySkill.getMySkill(controller
+                                            BattleMySkill.getMySkill(3,controller
                                                 .my_char_3
                                                 .getSkill(1), width),
                                             ChoosenSkill.getChoosenSkill(
-                                                'skill', width)
+                                                3, width)
                                           ],
                                         )
                                       ],
