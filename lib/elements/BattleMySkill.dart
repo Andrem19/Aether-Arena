@@ -9,6 +9,8 @@ class BattleMySkill {
     return GetBuilder<BattleController>(builder: (controller) {
       return InkWell(
         onTap: () {
+          controller.charFocus = position;
+          controller.skillFocus = skill.id;
           controller.infoText.value = skill.description;
 
           controller.update();
@@ -23,6 +25,13 @@ class BattleMySkill {
                 color: Colors.black,
                 width: 2,
               ),
+              boxShadow: controller.skillFocus == skill.id && controller.charFocus == position ? [
+                BoxShadow(
+                  color: Colors.white,
+                  spreadRadius: 5,
+                  blurRadius: 10,
+                ),
+              ] : null,
             ),
             child: Stack(children: [
               skill.img == ''

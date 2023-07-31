@@ -22,6 +22,9 @@ class BattleController extends GetxController {
   Move enemy_move = Move.empty();
   Focus focus = Focus.empty();
 
+  int charFocus = 0;
+  int skillFocus = 0;
+
   CharInBattle my_char_1 = CharInBattle.empty();
   CharInBattle my_char_2 = CharInBattle.empty();
   CharInBattle my_char_3 = CharInBattle.empty();
