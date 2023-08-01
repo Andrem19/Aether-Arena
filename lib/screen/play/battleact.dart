@@ -54,7 +54,7 @@ class BattleAct extends StatelessWidget {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    CharInTheBattle.getChar(
+                                    CharInTheBattle.getChar(true,
                                         controller.enemy_char_1, width),
                                     Column(
                                         crossAxisAlignment:
@@ -68,7 +68,7 @@ class BattleAct extends StatelessWidget {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    CharInTheBattle.getChar(
+                                    CharInTheBattle.getChar(true,
                                         controller.enemy_char_2, width),
                                     Column(
                                         crossAxisAlignment:
@@ -82,7 +82,7 @@ class BattleAct extends StatelessWidget {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    CharInTheBattle.getChar(
+                                    CharInTheBattle.getChar(true,
                                         controller.enemy_char_3, width),
                                     Column(
                                         crossAxisAlignment:
@@ -164,7 +164,7 @@ class BattleAct extends StatelessWidget {
                                         )
                                       ],
                                     ),
-                                    CharInTheBattle.getChar(
+                                    CharInTheBattle.getChar(false,
                                         controller.my_char_1, width),
                                   ],
                                 ),
@@ -208,7 +208,7 @@ class BattleAct extends StatelessWidget {
                                         )
                                       ],
                                     ),
-                                    CharInTheBattle.getChar(
+                                    CharInTheBattle.getChar(false,
                                         controller.my_char_2, width),
                                   ],
                                 ),
@@ -252,7 +252,7 @@ class BattleAct extends StatelessWidget {
                                         )
                                       ],
                                     ),
-                                    CharInTheBattle.getChar(
+                                    CharInTheBattle.getChar(false,
                                         controller.my_char_3, width),
                                   ],
                                 ),

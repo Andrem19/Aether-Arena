@@ -14,6 +14,8 @@ class Skill {
   String description;
   String img;
   Map<Energy, int> requiredEnergy;
+  Target target;
+  int effect_id;
   int cooldownValue;
   int cooldown;
   List<Effect> effects;
@@ -23,6 +25,8 @@ class Skill {
     required this.description,
     required this.img,
     required this.requiredEnergy,
+    required this.target,
+    required this.effect_id,
     required this.cooldownValue,
     required this.cooldown,
     required this.effects,
@@ -34,6 +38,8 @@ class Skill {
       description: '',
       img: '',
       requiredEnergy: {},
+      target: Target.None,
+      effect_id: 0,
       cooldownValue: 0,
       cooldown: 0,
       effects: [],
@@ -56,6 +62,8 @@ class Skill {
       description: description ?? this.description,
       img: img ?? this.img,
       requiredEnergy: requiredEnergy ?? this.requiredEnergy,
+      target: target ?? this.target,
+      effect_id: effect_id ?? this.effect_id,
       cooldownValue: cooldownValue ?? this.cooldownValue,
       cooldown: cooldown ?? this.cooldown,
       effects: effects ?? this.effects,
@@ -64,14 +72,15 @@ class Skill {
 
   Map<String, dynamic> toMap() {
     Map<String, int> requiredEnergyAsString = requiredEnergy.map(
-    (key, value) => MapEntry(EnumSerializer.energyToString(key), value)
-  );
+        (key, value) => MapEntry(EnumSerializer.energyToString(key), value));
     return <String, dynamic>{
       'id': id,
       'name': name,
       'description': description,
       'img': img,
       'requiredEnergy': requiredEnergyAsString,
+      'target' : EnumSerializer.targetToString(target),
+      'effect_id' : effect_id,
       'cooldownValue': cooldownValue,
       'cooldown': cooldown,
       'effects': effects.map((x) => x.toMap()).toList(),
@@ -84,12 +93,20 @@ class Skill {
       name: map['name'] as String,
       description: map['description'] as String,
       img: map['img'] as String,
-      requiredEnergy: Map<Energy, int>.from((map['requiredEnergy'] as Map<dynamic, dynamic>).map(
-      (key, value) => MapEntry(EnumSerializer.energyFromString(key), value as int),
+      requiredEnergy: Map<Energy, int>.from(
+          (map['requiredEnergy'] as Map<dynamic, dynamic>).map(
+        (key, value) =>
+            MapEntry(EnumSerializer.energyFromString(key), value as int),
       )),
+      target: EnumSerializer.targetFromString(map['target']),
+      effect_id: map['effect_id'] as int,
       cooldownValue: map['cooldownValue'] as int,
       cooldown: map['cooldown'] as int,
-      effects: List<Effect>.from((map['effects'] as List<dynamic>).map<Effect>((x) => Effect.fromMap(x as Map<String,dynamic>),),),
+      effects: List<Effect>.from(
+        (map['effects'] as List<dynamic>).map<Effect>(
+          (x) => Effect.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
     );
   }
 
@@ -106,27 +123,26 @@ class Skill {
   @override
   bool operator ==(covariant Skill other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.id == id &&
-      other.name == name &&
-      other.description == description &&
-      other.img == img &&
-      mapEquals(other.requiredEnergy, requiredEnergy) &&
-      other.cooldownValue == cooldownValue &&
-      other.cooldown == cooldown &&
-      listEquals(other.effects, effects);
+
+    return other.id == id &&
+        other.name == name &&
+        other.description == description &&
+        other.img == img &&
+        mapEquals(other.requiredEnergy, requiredEnergy) &&
+        other.cooldownValue == cooldownValue &&
+        other.cooldown == cooldown &&
+        listEquals(other.effects, effects);
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      name.hashCode ^
-      description.hashCode ^
-      img.hashCode ^
-      requiredEnergy.hashCode ^
-      cooldownValue.hashCode ^
-      cooldown.hashCode ^
-      effects.hashCode;
+        name.hashCode ^
+        description.hashCode ^
+        img.hashCode ^
+        requiredEnergy.hashCode ^
+        cooldownValue.hashCode ^
+        cooldown.hashCode ^
+        effects.hashCode;
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/models/char_in_battle.dart';
 
@@ -18,6 +19,14 @@ class BattleController extends GetxController {
   final MainGameController _mainContr = Get.find<MainGameController>();
   AccountPlayerData my_accData = AccountPlayerData.empty();
   AccountPlayerData enemy_accData = AccountPlayerData.empty();
+  Rx<Map<Energy, int>> myEnergy = Rx<Map<Energy, int>>({
+    Energy.ARCANE: 2,
+    Energy.PHYSICAL: 0,
+    Energy.UNIQUE: 0,
+    Energy.WILLPOWER: 1,
+    Energy.RANDOM: 0,
+  });
+  RxBool chooseTarget = false.obs;
   Move my_move = Move.empty();
   Move enemy_move = Move.empty();
   Focus focus = Focus.empty();
@@ -35,6 +44,7 @@ class BattleController extends GetxController {
 
   late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> _listener;
   Timer? _timer;
+  Timer? _timer_bliking;
 
   final RxInt timerValue = 21.obs;
   final RxString whoIsMove = ''.obs;
@@ -54,6 +64,7 @@ class BattleController extends GetxController {
     _updatePlayerReady();
     _mainContr.deleteGameInstant();
     _timer?.cancel();
+    _timer_bliking?.cancel();
     super.onClose();
   }
 
@@ -199,5 +210,19 @@ class BattleController extends GetxController {
       my_move.char_3.target = focus.target;
       my_move.char_3.ifOneWho = focus.target_idIfOne;
     }
+  }
+
+  void startTimerBliking() {
+    _timer_bliking?.cancel();
+    _timer_bliking = Timer.periodic(Duration(milliseconds: 800), (Timer timer) {
+      chooseTarget.value = !chooseTarget.value;
+      update();
+    });
+  }
+
+  void stopTimerBlinking() {
+    _timer_bliking?.cancel();
+    chooseTarget.value = false;
+    update();
   }
 }
