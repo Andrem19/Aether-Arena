@@ -8,11 +8,13 @@ import 'skill.dart';
 
 class Move {
   int moveNumber;
+  bool isNew;
   Hit char_1;
   Hit char_2;
   Hit char_3;
   Move({
     required this.moveNumber,
+    required this.isNew,
     required this.char_1,
     required this.char_2,
     required this.char_3,
@@ -21,20 +23,31 @@ class Move {
   static Move empty() {
     return Move(
       moveNumber: 0,
-      char_1: Hit(target: Target.None, ifOneWho: 0, skillId: 0),
-      char_2: Hit(target: Target.None, ifOneWho: 0, skillId: 0),
-      char_3: Hit(target: Target.None, ifOneWho: 0, skillId: 0),
+      isNew: false,
+      char_1: Hit(empty: true, target: Target.None, ifOneWho: 0, skillId: 0),
+      char_2: Hit(empty: true, target: Target.None, ifOneWho: 0, skillId: 0),
+      char_3: Hit(empty: true, target: Target.None, ifOneWho: 0, skillId: 0),
     );
+  }
+
+  void toEmpty() {
+    moveNumber = 0;
+    isNew = false;
+    char_1 = Hit(empty: true, target: Target.None, ifOneWho: 0, skillId: 0);
+    char_2 = Hit(empty: true, target: Target.None, ifOneWho: 0, skillId: 0);
+    char_3 = Hit(empty: true, target: Target.None, ifOneWho: 0, skillId: 0);
   }
 
   Move copyWith({
     int? moveNumber,
+    bool? isNew,
     Hit? char_1,
     Hit? char_2,
     Hit? char_3,
   }) {
     return Move(
       moveNumber: moveNumber ?? this.moveNumber,
+      isNew: isNew ?? this.isNew,
       char_1: char_1 ?? this.char_1,
       char_2: char_2 ?? this.char_2,
       char_3: char_3 ?? this.char_3,
@@ -44,6 +57,7 @@ class Move {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'moveNumber': moveNumber,
+      'isNew': isNew,
       'char_1': char_1.toMap(),
       'char_2': char_2.toMap(),
       'char_3': char_3.toMap(),
@@ -53,6 +67,7 @@ class Move {
   factory Move.fromMap(Map<String, dynamic> map) {
     return Move(
       moveNumber: map['moveNumber'] as int,
+      isNew: map['isNew'] as bool,
       char_1: Hit.fromMap(map['char_1'] as Map<String, dynamic>),
       char_2: Hit.fromMap(map['char_2'] as Map<String, dynamic>),
       char_3: Hit.fromMap(map['char_3'] as Map<String, dynamic>),
@@ -66,7 +81,7 @@ class Move {
 
   @override
   String toString() {
-    return 'Move(moveNumber: $moveNumber, char_1: $char_1, char_2: $char_2, char_3: $char_3)';
+    return 'Move(moveNumber: $moveNumber, isNew: $isNew, char_1: $char_1, char_2: $char_2, char_3: $char_3)';
   }
 
   @override
@@ -74,6 +89,7 @@ class Move {
     if (identical(this, other)) return true;
 
     return other.moveNumber == moveNumber &&
+        other.isNew == isNew &&
         other.char_1 == char_1 &&
         other.char_2 == char_2 &&
         other.char_3 == char_3;
@@ -82,6 +98,7 @@ class Move {
   @override
   int get hashCode {
     return moveNumber.hashCode ^
+        isNew.hashCode ^
         char_1.hashCode ^
         char_2.hashCode ^
         char_3.hashCode;
@@ -89,21 +106,25 @@ class Move {
 }
 
 class Hit {
+  bool empty;
   Target target;
   int ifOneWho;
   int skillId;
   Hit({
+    required this.empty,
     required this.target,
     required this.ifOneWho,
     required this.skillId,
   });
 
   Hit copyWith({
+    bool? empty,
     Target? target,
     int? ifOneWho,
     int? skillId,
   }) {
     return Hit(
+      empty: empty ?? this.empty,
       target: target ?? this.target,
       ifOneWho: ifOneWho ?? this.ifOneWho,
       skillId: skillId ?? this.skillId,
@@ -112,6 +133,7 @@ class Hit {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'empty': empty,
       'target': EnumSerializer.targetToString(target),
       'ifOneWho': ifOneWho,
       'skillId': skillId,
@@ -120,6 +142,7 @@ class Hit {
 
   factory Hit.fromMap(Map<String, dynamic> map) {
     return Hit(
+      empty: map['empty'] as bool,
       target: EnumSerializer.targetFromString(map['target']),
       ifOneWho: map['ifOneWho'] as int,
       skillId: map['skillId'] as int,
@@ -132,18 +155,20 @@ class Hit {
       Hit.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'Hit(target: $target, ifOneWho: $ifOneWho, skillId: $skillId)';
+  String toString() =>
+      'Hit(target: $target, ifOneWho: $ifOneWho, skillId: $skillId)';
 
   @override
   bool operator ==(covariant Hit other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.target == target &&
-      other.ifOneWho == ifOneWho &&
-      other.skillId == skillId;
+
+    return
+    other.empty == empty &&
+     other.target == target &&
+        other.ifOneWho == ifOneWho &&
+        other.skillId == skillId;
   }
 
   @override
-  int get hashCode => target.hashCode ^ ifOneWho.hashCode ^ skillId.hashCode;
+  int get hashCode => empty.hashCode ^ target.hashCode ^ ifOneWho.hashCode ^ skillId.hashCode;
 }

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/models/char_in_battle.dart';
+import 'package:the_test_naruto_arena/services/battle_func.dart';
 
 import '../models/account_player_data.dart';
 import '../models/enums.dart';
@@ -15,6 +16,7 @@ import 'main_game_controller.dart';
 class BattleController extends GetxController {
   int timeOfMove = 21;
   RxString infoText = ''.obs;
+  String enemy_role = 'B';
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final MainGameController _mainContr = Get.find<MainGameController>();
   AccountPlayerData my_accData = AccountPlayerData.empty();
@@ -34,13 +36,13 @@ class BattleController extends GetxController {
   int charFocus = 0;
   int skillFocus = 0;
 
-  CharInBattle my_char_1 = CharInBattle.empty();
-  CharInBattle my_char_2 = CharInBattle.empty();
-  CharInBattle my_char_3 = CharInBattle.empty();
+  Rx<CharInBattle> my_char_1 = CharInBattle.empty().obs;
+  Rx<CharInBattle> my_char_2 = CharInBattle.empty().obs;
+  Rx<CharInBattle> my_char_3 = CharInBattle.empty().obs;
 
-  CharInBattle enemy_char_1 = CharInBattle.empty();
-  CharInBattle enemy_char_2 = CharInBattle.empty();
-  CharInBattle enemy_char_3 = CharInBattle.empty();
+  Rx<CharInBattle> enemy_char_1 = CharInBattle.empty().obs;
+  Rx<CharInBattle> enemy_char_2 = CharInBattle.empty().obs;
+  Rx<CharInBattle> enemy_char_3 = CharInBattle.empty().obs;
 
   late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> _listener;
   Timer? _timer;
@@ -70,6 +72,7 @@ class BattleController extends GetxController {
 
   Future<void> _setUpVars() async {
     myRole = _mainContr.curentRole;
+    enemy_role = myRole == 'A' ? 'B' : 'A';
     final doc = await _firebaseFirestore
         .collection('battles')
         .doc(_mainContr.curentGameId)
@@ -94,21 +97,21 @@ class BattleController extends GetxController {
         : AccountPlayerData.fromJson(data['PlayerA_accData']);
 
     if (myRole == 'A') {
-      my_char_1 = Achar_1;
-      my_char_2 = Achar_2;
-      my_char_3 = Achar_3;
+      my_char_1.value = Achar_1;
+      my_char_2.value = Achar_2;
+      my_char_3.value = Achar_3;
 
-      enemy_char_1 = Bchar_1;
-      enemy_char_2 = Bchar_2;
-      enemy_char_3 = Bchar_3;
+      enemy_char_1.value = Bchar_1;
+      enemy_char_2.value = Bchar_2;
+      enemy_char_3.value = Bchar_3;
     } else {
-      my_char_1 = Bchar_1;
-      my_char_2 = Bchar_2;
-      my_char_3 = Bchar_3;
+      my_char_1.value = Bchar_1;
+      my_char_2.value = Bchar_2;
+      my_char_3.value = Bchar_3;
 
-      enemy_char_1 = Achar_1;
-      enemy_char_2 = Achar_2;
-      enemy_char_3 = Achar_3;
+      enemy_char_1.value = Achar_1;
+      enemy_char_2.value = Achar_2;
+      enemy_char_3.value = Achar_3;
     }
 
     timerValue.value = timeOfMove;
@@ -125,9 +128,36 @@ class BattleController extends GetxController {
       if (snapshot.exists) {
         final data = snapshot.data();
         whoIsMove.value = data!['WhosMove'];
+
+        var Achar_1 = CharInBattle.fromJson(data['playerA_char_1']);
+        var Achar_2 = CharInBattle.fromJson(data['playerA_char_2']);
+        var Achar_3 = CharInBattle.fromJson(data['playerA_char_3']);
+
+        var Bchar_1 = CharInBattle.fromJson(data['playerB_char_1']);
+        var Bchar_2 = CharInBattle.fromJson(data['playerB_char_2']);
+        var Bchar_3 = CharInBattle.fromJson(data['playerB_char_3']);
+
+        if (myRole == 'A') {
+          my_char_1.value = Achar_1;
+          my_char_2.value = Achar_2;
+          my_char_3.value = Achar_3;
+
+          enemy_char_1.value = Bchar_1;
+          enemy_char_2.value = Bchar_2;
+          enemy_char_3.value = Bchar_3;
+        } else {
+          my_char_1.value = Bchar_1;
+          my_char_2.value = Bchar_2;
+          my_char_3.value = Bchar_3;
+
+          enemy_char_1.value = Achar_1;
+          enemy_char_2.value = Achar_2;
+          enemy_char_3.value = Achar_3;
+        }
+
         if (whoIsMove.value == myRole && _timer == null) {
           timerValue.value = timeOfMove;
-          loadMove();
+          // loadMove();
           _startTimerMove();
         }
         if (whoIsMove.value != myRole) {
@@ -135,6 +165,7 @@ class BattleController extends GetxController {
           _timer?.cancel();
           _timer = null;
         }
+        update();
       }
     });
   }
@@ -150,7 +181,7 @@ class BattleController extends GetxController {
       timerValue.value--;
       update();
       if (timerValue == 0) {
-        saveMove();
+        // saveMove();
         timerValue.value = timeOfMove;
         _timer?.cancel();
         _setUpNextMove();
@@ -166,50 +197,74 @@ class BattleController extends GetxController {
     });
   }
 
-  void saveMove() async {
-    my_move.moveNumber++;
-    await _firebaseFirestore
-        .collection('battles')
-        .doc(currentGameId)
-        .update({'GameInfo_$myRole': my_move.toJson()});
-  }
+  // void saveMove() async {
+  //   my_move.moveNumber++;
+  //   await _firebaseFirestore.collection('battles').doc(currentGameId).update({
+  //     'GameInfo_$myRole': my_move.toJson(),
+  //   });
+  //   my_move.toEmpty();
+  // }
 
-  void loadMove() async {
-    String enemy_role = myRole == 'A' ? 'B' : 'A';
-    var doc =
-        await _firebaseFirestore.collection('battles').doc(currentGameId).get();
-    var data = doc.data();
-    enemy_move = Move.fromJson(data!['GameInfo_$enemy_role']);
-    print(enemy_move.moveNumber);
+  // void loadMove() async {
+  //   var doc =
+  //       await _firebaseFirestore.collection('battles').doc(currentGameId).get();
+  //   var data = doc.data();
+  //   enemy_move = Move.fromJson(data!['GameInfo_$enemy_role']);
+  //   print(enemy_move);
+  // }
+
+  void applyMyMove() {
+    if (my_move.isNew == true) {
+      Skill skill_1 =
+          BattleFunc.getAttackSkill(my_char_1.value, enemy_move.char_1.skillId);
+      BattleFunc.addEffects(skill_1);
+      Skill skill_2 =
+          BattleFunc.getAttackSkill(my_char_2.value, enemy_move.char_2.skillId);
+      BattleFunc.addEffects(skill_2);
+      Skill skill_3 =
+          BattleFunc.getAttackSkill(my_char_3.value, enemy_move.char_3.skillId);
+      BattleFunc.addEffects(skill_3);
+    }
   }
 
   void setCharFocus(int id) {
     focus.setUpChar(id);
   }
 
-  void setSkillFocus(int id) {
-    focus.setUpSkill(_mainContr.characters, id);
+  void setSkillFocus(Skill skill) {
+    focus.setUpSkill(_mainContr.characters, skill);
   }
 
-  void setTarget(int id, Target target) {
-    focus.setUpTarget(id, target);
+  void setTarget(int targetId) {
+    focus.setUpTarget_id(targetId);
     passFocusToTheMove();
   }
 
+  void clearFocus() {
+    focus.clearFocus();
+  }
+
   void passFocusToTheMove() {
-    if (focus.myCharId == my_char_1.id) {
+    if (focus.myCharId == my_char_1.value.id) {
       my_move.char_1.skillId = focus.skill_id;
       my_move.char_1.target = focus.target;
       my_move.char_1.ifOneWho = focus.target_idIfOne;
-    } else if (focus.myCharId == my_char_2.id) {
+      my_move.char_1.empty = false;
+      my_move.isNew = true;
+    } else if (focus.myCharId == my_char_2.value.id) {
       my_move.char_2.skillId = focus.skill_id;
       my_move.char_2.target = focus.target;
       my_move.char_2.ifOneWho = focus.target_idIfOne;
-    } else if (focus.myCharId == my_char_3.id) {
+      my_move.char_2.empty = false;
+      my_move.isNew = true;
+    } else if (focus.myCharId == my_char_3.value.id) {
       my_move.char_3.skillId = focus.skill_id;
       my_move.char_3.target = focus.target;
       my_move.char_3.ifOneWho = focus.target_idIfOne;
+      my_move.char_3.empty = false;
+      my_move.isNew = true;
     }
+    focus.clearFocus();
   }
 
   void startTimerBliking() {

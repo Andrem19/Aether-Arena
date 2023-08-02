@@ -16,15 +16,15 @@ class BattleMySkill {
             controller.charFocus = position;
             controller.skillFocus = skill.id;
             controller.infoText.value = skill.description;
-            controller.focus.setUpChar(getCharId(position, controller));
-            controller.focus.setUpSkill(main_cont.characters, skill.id);
+            controller.setCharFocus(getCharId(position, controller));
+            controller.setSkillFocus(skill);
             controller.chooseTarget.value = true;
             controller.startTimerBliking();
           } else {
             controller.charFocus = position;
             controller.skillFocus = 0;
             controller.infoText.value = skill.description;
-            controller.focus.clearFocus();
+            controller.clearFocus();
             controller.stopTimerBlinking();
           }
 
@@ -70,11 +70,11 @@ class BattleMySkill {
   static int getCharId(int position, BattleController cont) {
     switch (position) {
       case 1:
-        return cont.my_char_1.id;
+        return cont.my_char_1.value.id;
       case 2:
-        return cont.my_char_2.id;
+        return cont.my_char_2.value.id;
       case 3:
-        return cont.my_char_3.id;
+        return cont.my_char_3.value.id;
       default:
         return 0;
     }

@@ -6,13 +6,20 @@ import '../models/char_in_battle.dart';
 
 class CharInTheBattle {
   static Widget getChar(bool isEnemy, CharInBattle char, double width) {
-    return GetBuilder<BattleController>(
-      builder: (controller) {
-        bool isTarget = false;
+    return GetBuilder<BattleController>(builder: (controller) {
+      bool isTarget = false;
       if (isEnemy && char.health > 0 && controller.chooseTarget.value) {
         isTarget = true;
       }
-        return Padding(
+      return InkWell(
+        onTap: controller.chooseTarget.value
+            ? () {
+                controller.setTarget(char.id);
+                controller.passFocusToTheMove();
+                controller.stopTimerBlinking();
+              }
+            : null,
+        child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 3),
           child: Stack(
             children: [
@@ -92,8 +99,8 @@ class CharInTheBattle {
               ),
             ],
           ),
-        );
-      }
-    );
+        ),
+      );
+    });
   }
 }

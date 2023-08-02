@@ -55,7 +55,7 @@ class BattleAct extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     CharInTheBattle.getChar(true,
-                                        controller.enemy_char_1, width),
+                                        controller.enemy_char_1.value, width),
                                     Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -69,7 +69,7 @@ class BattleAct extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     CharInTheBattle.getChar(true,
-                                        controller.enemy_char_2, width),
+                                        controller.enemy_char_2.value, width),
                                     Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -83,7 +83,7 @@ class BattleAct extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     CharInTheBattle.getChar(true,
-                                        controller.enemy_char_3, width),
+                                        controller.enemy_char_3.value, width),
                                     Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -147,16 +147,16 @@ class BattleAct extends StatelessWidget {
                                               CrossAxisAlignment.end,
                                           children: [
                                             BattleMySkill.getMySkill(1,controller
-                                                .my_char_1
+                                                .my_char_1.value
                                                 .getSkill(4), width),
                                             BattleMySkill.getMySkill(1,controller
-                                                .my_char_1
+                                                .my_char_1.value
                                                 .getSkill(3), width),
                                             BattleMySkill.getMySkill(1,controller
-                                                .my_char_1
+                                                .my_char_1.value
                                                 .getSkill(2), width),
                                             BattleMySkill.getMySkill(1,controller
-                                                .my_char_1
+                                                .my_char_1.value
                                                 .getSkill(1), width),
                                             ChoosenSkill.getChoosenSkill(
                                                 1, width)
@@ -165,7 +165,7 @@ class BattleAct extends StatelessWidget {
                                       ],
                                     ),
                                     CharInTheBattle.getChar(false,
-                                        controller.my_char_1, width),
+                                        controller.my_char_1.value, width),
                                   ],
                                 ),
                                 Column(
@@ -191,16 +191,16 @@ class BattleAct extends StatelessWidget {
                                               CrossAxisAlignment.end,
                                           children: [
                                             BattleMySkill.getMySkill(2,controller
-                                                .my_char_2
+                                                .my_char_2.value
                                                 .getSkill(4), width),
                                             BattleMySkill.getMySkill(2,controller
-                                                .my_char_2
+                                                .my_char_2.value
                                                 .getSkill(3), width),
                                             BattleMySkill.getMySkill(2,controller
-                                                .my_char_2
+                                                .my_char_2.value
                                                 .getSkill(2), width),
                                             BattleMySkill.getMySkill(2,controller
-                                                .my_char_2
+                                                .my_char_2.value
                                                 .getSkill(1), width),
                                             ChoosenSkill.getChoosenSkill(
                                                 2, width)
@@ -209,7 +209,7 @@ class BattleAct extends StatelessWidget {
                                       ],
                                     ),
                                     CharInTheBattle.getChar(false,
-                                        controller.my_char_2, width),
+                                        controller.my_char_2.value, width),
                                   ],
                                 ),
                                 Column(
@@ -235,16 +235,16 @@ class BattleAct extends StatelessWidget {
                                               CrossAxisAlignment.end,
                                           children: [
                                             BattleMySkill.getMySkill(3,controller
-                                                .my_char_3
+                                                .my_char_3.value
                                                 .getSkill(4), width),
                                             BattleMySkill.getMySkill(3,controller
-                                                .my_char_3
+                                                .my_char_3.value
                                                 .getSkill(3), width),
                                             BattleMySkill.getMySkill(3,controller
-                                                .my_char_3
+                                                .my_char_3.value
                                                 .getSkill(2), width),
                                             BattleMySkill.getMySkill(3,controller
-                                                .my_char_3
+                                                .my_char_3.value
                                                 .getSkill(1), width),
                                             ChoosenSkill.getChoosenSkill(
                                                 3, width)
@@ -253,7 +253,7 @@ class BattleAct extends StatelessWidget {
                                       ],
                                     ),
                                     CharInTheBattle.getChar(false,
-                                        controller.my_char_3, width),
+                                        controller.my_char_3.value, width),
                                   ],
                                 ),
                               ],

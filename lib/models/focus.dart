@@ -39,15 +39,17 @@ class Focus {
     myCharId = id;
   }
 
-  void setUpSkill(List<CharInBattle> chars, int id) {
+  void setUpSkill(List<CharInBattle> chars, Skill current_skill) {
     if (isEmpty == false) {
       CharInBattle char = chars.firstWhere((element) => element.id == myCharId,
           orElse: CharInBattle.empty);
       if (char != CharInBattle.empty()) {
-        var skill = char.allSkills
-            .firstWhere((element) => element.id == id, orElse: Skill.getEmpty);
+        var skill = char.allSkills.firstWhere(
+            (element) => element.id == current_skill.id,
+            orElse: Skill.getEmpty);
         if (skill != Skill.getEmpty()) {
-          skill_id = id;
+          skill_id = current_skill.id;
+          target = current_skill.target;
         }
       }
     } else {
@@ -55,5 +57,9 @@ class Focus {
     }
   }
 
-  void setUpTarget(int? targetId, Target targetType) {}
+  void setUpTarget_id(int targetId) {
+    if (target == Target.SingleEnemyTarget) {
+      target_idIfOne = targetId;
+    }
+  }
 }

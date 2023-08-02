@@ -137,8 +137,6 @@ class WaitingController extends GetxController {
         'playerB_char_1': CharInBattle.empty().toJson(),
         'playerB_char_2': CharInBattle.empty().toJson(),
         'playerB_char_3': CharInBattle.empty().toJson(),
-        'GameInfo_A': Move.empty().toJson(),
-        'GameInfo_B': Move.empty().toJson(),
         'date': Timestamp.now().seconds,
       });
       mainContr.curentRole = 'A';
