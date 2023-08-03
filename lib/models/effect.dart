@@ -6,8 +6,12 @@ import 'enums.dart';
 
 class Effect {
   int id;
+  String owner;
+  int whoAttackerId;
   String name;
   int value;
+  int value_min;
+  int value_max;
   int durationRaund;
   TypeOfAction typeOfAction;
   Target target;
@@ -15,24 +19,32 @@ class Effect {
 
   Effect({
     required this.id,
+    required this.owner,
+    required this.whoAttackerId,
     required this.name,
     required this.value,
+    required this.value_min,
+    required this.value_max,
     required this.durationRaund,
     required this.typeOfAction,
     required this.target,
     required this.skillId,
   });
   static Effect getEmpty() {
-  return Effect(
-    id: 0,
-    name: 'null',
-    value: 0,
-    durationRaund: 0,
-    typeOfAction: TypeOfAction.None,
-    target: Target.None,
-    skillId: 0,
-  );
-}
+    return Effect(
+      id: 0,
+      owner: '',
+      whoAttackerId: 0,
+      name: 'null',
+      value: 0,
+      value_min: 0,
+      value_max: 0,
+      durationRaund: 0,
+      typeOfAction: TypeOfAction.None,
+      target: Target.None,
+      skillId: 0,
+    );
+  }
 
   String toJson() => json.encode(toMap());
 
@@ -42,8 +54,12 @@ class Effect {
   static Effect fromMap(Map<String, dynamic> json) {
     return Effect(
       id: json['id'],
+      owner: json['owner'],
+      whoAttackerId: json['whoAttackerId'],
       name: json['name'],
       value: json['value'],
+      value_min: json['value_min'],
+      value_max: json['value_max'],
       durationRaund: json['durationRaund'],
       typeOfAction: EnumSerializer.typeOfActionFromString(json['typeOfAction']),
       target: EnumSerializer.targetFromString(json['target']),
@@ -53,12 +69,15 @@ class Effect {
 
   Map<String, dynamic> toMap() => {
         'id': id,
+        'owner': owner,
+        'whoAttackerId': whoAttackerId,
         'name': name,
         'value': value,
+        'value_min': value_min,
+        'value_max': value_max,
         'durationRaund': durationRaund,
         'typeOfAction': EnumSerializer.typeOfActionToString(typeOfAction),
         'target': EnumSerializer.targetToString(target),
         'skillId': skillId,
       };
-  
 }

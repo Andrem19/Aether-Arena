@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/battle_controller.dart';
+import 'package:the_test_naruto_arena/models/move.dart';
 
 import '../models/skill.dart';
 
 class ChoosenSkill {
   static Widget getChoosenSkill(int position, double width) {
     return GetBuilder<BattleController>(builder: (controller) {
+      Skill skill = getSkillFromMove(position, controller);
       return Padding(
         padding: const EdgeInsets.fromLTRB(8, 3, 8, 3),
         child: Container(
@@ -19,11 +21,33 @@ class ChoosenSkill {
             ),
           ),
           child: Stack(children: [
-            Image.asset('assets/default_avatar.jpg'),
+            skill.img == ''
+                ? Image.asset('assets/default_avatar.jpg')
+                : Image.asset(skill.img),
             Text('')
           ]),
         ),
       );
     });
+  }
+
+  static Skill getSkillFromMove(int position, BattleController cont) {
+    if (cont.my_move.isNew) {
+      switch (position) {
+        case 1:
+          return cont.my_char_1.value.allSkills.firstWhere(
+              (element) => element.id == cont.my_move.char_1.skillId);
+        case 2:
+          return cont.my_char_2.value.allSkills.firstWhere(
+              (element) => element.id == cont.my_move.char_2.skillId);
+        case 3:
+          return cont.my_char_3.value.allSkills.firstWhere(
+              (element) => element.id == cont.my_move.char_3.skillId);
+        default:
+          return Skill.getEmpty();
+      }
+    } else {
+      return Skill.getEmpty();
+    }
   }
 }

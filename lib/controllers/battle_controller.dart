@@ -29,6 +29,7 @@ class BattleController extends GetxController {
     Energy.RANDOM: 0,
   });
   RxBool chooseTarget = false.obs;
+  RxBool enemyClicable = false.obs;
   Move my_move = Move.empty();
   Move enemy_move = Move.empty();
   Focus focus = Focus.empty();
@@ -216,14 +217,14 @@ class BattleController extends GetxController {
   void applyMyMove() {
     if (my_move.isNew == true) {
       Skill skill_1 =
-          BattleFunc.getAttackSkill(my_char_1.value, enemy_move.char_1.skillId);
-      BattleFunc.addEffects(skill_1);
+          BattleFunc.getAttackSkill(my_char_1.value, my_move.char_1.skillId);
+      BattleFunc.addEffects(myRole, my_char_1.value.id, skill_1, my_move.char_1.ifOneWho);
       Skill skill_2 =
-          BattleFunc.getAttackSkill(my_char_2.value, enemy_move.char_2.skillId);
-      BattleFunc.addEffects(skill_2);
+          BattleFunc.getAttackSkill(my_char_2.value, my_move.char_2.skillId);
+      BattleFunc.addEffects(myRole, my_char_2.value.id, skill_2, my_move.char_2.ifOneWho);
       Skill skill_3 =
-          BattleFunc.getAttackSkill(my_char_3.value, enemy_move.char_3.skillId);
-      BattleFunc.addEffects(skill_3);
+          BattleFunc.getAttackSkill(my_char_3.value, my_move.char_3.skillId);
+      BattleFunc.addEffects(myRole, my_char_3.value.id, skill_3, my_move.char_3.ifOneWho);
     }
   }
 
@@ -268,6 +269,7 @@ class BattleController extends GetxController {
   }
 
   void startTimerBliking() {
+    enemyClicable.value = true;
     _timer_bliking?.cancel();
     _timer_bliking = Timer.periodic(Duration(milliseconds: 800), (Timer timer) {
       chooseTarget.value = !chooseTarget.value;
@@ -276,8 +278,12 @@ class BattleController extends GetxController {
   }
 
   void stopTimerBlinking() {
+    enemyClicable.value = false;
     _timer_bliking?.cancel();
     chooseTarget.value = false;
     update();
+  }
+  void addRemoveHealsAnimated(int who, bool plus, int val) {
+
   }
 }

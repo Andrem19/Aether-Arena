@@ -12,7 +12,7 @@ class CharInTheBattle {
         isTarget = true;
       }
       return InkWell(
-        onTap: controller.chooseTarget.value
+        onTap: controller.enemyClicable.value
             ? () {
                 controller.setTarget(char.id);
                 controller.passFocusToTheMove();
@@ -23,8 +23,9 @@ class CharInTheBattle {
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 3),
           child: Stack(
             children: [
-              Opacity(
-                opacity: isTarget ? 0.5 : 1,
+              AnimatedOpacity(
+                opacity: isTarget ? 0.4 : 1,
+                duration: Duration(milliseconds: 800),
                 child: Container(
                   width: width * 0.18,
                   height: width * 0.18,
