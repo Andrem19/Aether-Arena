@@ -6,15 +6,15 @@ import 'package:flutter/foundation.dart';
 import 'package:the_test_naruto_arena/models/condition.dart';
 import 'package:the_test_naruto_arena/models/effect.dart';
 import 'package:the_test_naruto_arena/models/skill.dart';
+import 'package:the_test_naruto_arena/models/stats.dart';
 
 class CharInBattle {
   int id;
   String name;
   String char_class;
   String img;
-  int health;
+  Stats stats;
   List<Effect> attachedEffects;
-  int weaken;
   int currentSkill_1;
   int currentSkill_2;
   int currentSkill_3;
@@ -27,9 +27,8 @@ class CharInBattle {
     required this.name,
     required this.char_class,
     required this.img,
-    required this.health,
+    required this.stats,
     required this.attachedEffects,
-    required this.weaken,
     required this.currentSkill_1,
     required this.currentSkill_2,
     required this.currentSkill_3,
@@ -45,9 +44,8 @@ class CharInBattle {
       name: '',
       char_class: '',
       img: '',
-      health: 0,
+      stats: Stats.empty(),
       attachedEffects: [],
-      weaken: 0,
       currentSkill_1: 0,
       currentSkill_2: 0,
       currentSkill_3: 0,
@@ -73,12 +71,16 @@ class CharInBattle {
     }
   }
 
+  Skill getSkilByID(int id) {
+    return allSkills.firstWhere((element) => element.id == id);
+  }
+
   CharInBattle copyWith({
     int? id,
     String? name,
     String? char_class,
     String? img,
-    int? health,
+    Stats? stats,
     List<Effect>? attachedEffects,
     int? weaken,
     int? currentSkill_1,
@@ -94,9 +96,8 @@ class CharInBattle {
       name: name ?? this.name,
       char_class: char_class ?? this.char_class,
       img: img ?? this.img,
-      health: health ?? this.health,
+      stats: stats ?? this.stats,
       attachedEffects: attachedEffects ?? this.attachedEffects,
-      weaken: weaken ?? this.weaken,
       currentSkill_1: currentSkill_1 ?? this.currentSkill_1,
       currentSkill_2: currentSkill_2 ?? this.currentSkill_2,
       currentSkill_3: currentSkill_3 ?? this.currentSkill_3,
@@ -113,9 +114,8 @@ class CharInBattle {
       'name': name,
       'char_class': char_class,
       'img': img,
-      'health': health,
+      'stats': stats.toMap(),
       'attachedEffects': attachedEffects.map((x) => x.toMap()).toList(),
-      'weaken': weaken,
       'currentSkill_1': currentSkill_1,
       'currentSkill_2': currentSkill_2,
       'currentSkill_3': currentSkill_3,
@@ -132,13 +132,12 @@ class CharInBattle {
       name: map['name'] as String,
       char_class: map['char_class'] as String,
       img: map['img'] as String,
-      health: map['health'] as int,
+      stats: Stats.fromMap(map['stats']),
       attachedEffects: List<Effect>.from(
         (map['attachedEffects'] as List<dynamic>).map<Effect>(
           (x) => Effect.fromMap(x as Map<String, dynamic>),
         ),
       ),
-      weaken: map['weaken'],
       currentSkill_1: map['currentSkill_1'] as int,
       currentSkill_2: map['currentSkill_2'] as int,
       currentSkill_3: map['currentSkill_3'] as int,
@@ -162,7 +161,7 @@ class CharInBattle {
 
   @override
   String toString() {
-    return 'CharInBattle(id: $id, name: $name, char_class: $char_class, img: $img, health: $health, attachedEffects: $attachedEffects, weaken: $weaken, currentSkill_1: $currentSkill_1, currentSkill_2: $currentSkill_2, currentSkill_3: $currentSkill_3, currentSkill_4: $currentSkill_4, allSkills: $allSkills, condition: $condition, isOpen: $isOpen)';
+    return 'CharInBattle(id: $id, name: $name, char_class: $char_class, img: $img, stats: $stats, attachedEffects: $attachedEffects, currentSkill_1: $currentSkill_1, currentSkill_2: $currentSkill_2, currentSkill_3: $currentSkill_3, currentSkill_4: $currentSkill_4, allSkills: $allSkills, condition: $condition, isOpen: $isOpen)';
   }
 
   @override
@@ -173,9 +172,8 @@ class CharInBattle {
         other.name == name &&
         other.char_class == char_class &&
         other.img == img &&
-        other.health == health &&
+        other.stats == stats &&
         listEquals(other.attachedEffects, attachedEffects) &&
-        other.weaken == weaken &&
         other.currentSkill_1 == currentSkill_1 &&
         other.currentSkill_2 == currentSkill_2 &&
         other.currentSkill_3 == currentSkill_3 &&
@@ -191,9 +189,8 @@ class CharInBattle {
         name.hashCode ^
         char_class.hashCode ^
         img.hashCode ^
-        health.hashCode ^
+        stats.hashCode ^
         attachedEffects.hashCode ^
-        weaken.hashCode ^
         currentSkill_1.hashCode ^
         currentSkill_2.hashCode ^
         currentSkill_3.hashCode ^

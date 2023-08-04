@@ -62,22 +62,6 @@ class EnergyBattle {
               Container(
                 width: size,
                 height: size,
-                color: Colors.black,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 6),
-                child: Text('0'),
-              )
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(7, 2, 0, 3),
-          child: Row(
-            children: [
-              Container(
-                width: size,
-                height: size,
                 color: Colors.white,
               ),
               Padding(

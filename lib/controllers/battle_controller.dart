@@ -57,7 +57,7 @@ class BattleController extends GetxController {
 
   @override
   void onInit() async {
-    await _setUpVars();
+    await setUpVars();
     _startListener();
     super.onInit();
   }
@@ -71,7 +71,7 @@ class BattleController extends GetxController {
     super.onClose();
   }
 
-  Future<void> _setUpVars() async {
+  Future<void> setUpVars() async {
     myRole = _mainContr.curentRole;
     enemy_role = myRole == 'A' ? 'B' : 'A';
     final doc = await _firebaseFirestore
@@ -198,34 +198,79 @@ class BattleController extends GetxController {
     });
   }
 
-  // void saveMove() async {
-  //   my_move.moveNumber++;
-  //   await _firebaseFirestore.collection('battles').doc(currentGameId).update({
-  //     'GameInfo_$myRole': my_move.toJson(),
-  //   });
-  //   my_move.toEmpty();
-  // }
-
-  // void loadMove() async {
-  //   var doc =
-  //       await _firebaseFirestore.collection('battles').doc(currentGameId).get();
-  //   var data = doc.data();
-  //   enemy_move = Move.fromJson(data!['GameInfo_$enemy_role']);
-  //   print(enemy_move);
-  // }
-
   void applyMyMove() {
     if (my_move.isNew == true) {
       Skill skill_1 =
           BattleFunc.getAttackSkill(my_char_1.value, my_move.char_1.skillId);
-      BattleFunc.addEffects(myRole, my_char_1.value.id, skill_1, my_move.char_1.ifOneWho);
+      BattleFunc.addEffects(
+          myRole, my_char_1.value, skill_1, my_move.char_1.ifOneWho);
       Skill skill_2 =
           BattleFunc.getAttackSkill(my_char_2.value, my_move.char_2.skillId);
-      BattleFunc.addEffects(myRole, my_char_2.value.id, skill_2, my_move.char_2.ifOneWho);
+      BattleFunc.addEffects(
+          myRole, my_char_2.value, skill_2, my_move.char_2.ifOneWho);
       Skill skill_3 =
           BattleFunc.getAttackSkill(my_char_3.value, my_move.char_3.skillId);
-      BattleFunc.addEffects(myRole, my_char_3.value.id, skill_3, my_move.char_3.ifOneWho);
+      BattleFunc.addEffects(
+          myRole, my_char_3.value, skill_3, my_move.char_3.ifOneWho);
     }
+  }
+
+  void execMyMove() {
+    charLoop(my_char_1.value, true);
+    charLoop(my_char_2.value, true);
+    charLoop(my_char_3.value, true);
+    charLoop(enemy_char_1.value, false);
+    charLoop(enemy_char_2.value, false);
+    charLoop(enemy_char_3.value, false);
+    saveMove();
+  }
+
+  void charLoop(CharInBattle targetChar, bool isMine) {
+    if (isMine) {
+      if (targetChar.stats.weaken > 0) {
+        targetChar.stats.weaken--;
+      }
+    }
+    if (!isMine) {
+      if (targetChar.stats.poison >= 2) {
+        int damage = (targetChar.stats.poison / 2).toInt();
+        addRemoveHealsAnimated(targetChar, false, damage);
+      } else if (targetChar.stats.poison < 2 && targetChar.stats.poison > 0) {
+        targetChar.stats.poison = 0;
+      }
+    }
+    for (var i = 0; i < targetChar.attachedEffects.length; i++) {
+      BattleFunc.execEffect(myRole, targetChar.attachedEffects[i], targetChar);
+    }
+  }
+
+  void saveMove() async {
+    await _firebaseFirestore.collection('battles').doc(currentGameId).update({
+      'playerA_char_1': myRole == 'A'
+          ? my_char_1.value.toJson()
+          : enemy_char_1.value.toJson(),
+      'playerA_char_2': myRole == 'A'
+          ? my_char_2.value.toJson()
+          : enemy_char_2.value.toJson(),
+      'playerA_char_3': myRole == 'A'
+          ? my_char_3.value.toJson()
+          : enemy_char_3.value.toJson(),
+      'playerB_char_1': myRole == 'B'
+          ? my_char_1.value.toJson()
+          : enemy_char_1.value.toJson(),
+      'playerB_char_2': myRole == 'B'
+          ? my_char_2.value.toJson()
+          : enemy_char_2.value.toJson(),
+      'playerB_char_3': myRole == 'B'
+          ? my_char_3.value.toJson()
+          : enemy_char_3.value.toJson(),
+    });
+  }
+
+  void loadMove() async {
+    var doc =
+        await _firebaseFirestore.collection('battles').doc(currentGameId).get();
+    var data = doc.data();
   }
 
   void setCharFocus(int id) {
@@ -246,6 +291,7 @@ class BattleController extends GetxController {
   }
 
   void passFocusToTheMove() {
+    print(focus);
     if (focus.myCharId == my_char_1.value.id) {
       my_move.char_1.skillId = focus.skill_id;
       my_move.char_1.target = focus.target;
@@ -265,6 +311,7 @@ class BattleController extends GetxController {
       my_move.char_3.empty = false;
       my_move.isNew = true;
     }
+    print(my_move);
     focus.clearFocus();
   }
 
@@ -283,7 +330,23 @@ class BattleController extends GetxController {
     chooseTarget.value = false;
     update();
   }
-  void addRemoveHealsAnimated(int who, bool plus, int val) {
 
+  void addRemoveHealsAnimated(CharInBattle target, bool plus, int val) {
+    if (target.stats.health > 0) {
+      for (var i = 0; i < val; i++) {
+        Future.delayed(Duration(milliseconds: 70)).then((value) {
+          if (plus) {
+            if (target.stats.health < 30) {
+              target.stats.health++;
+            }
+          } else {
+            if (target.stats.health > 0) {
+              target.stats.health--;
+            }
+          }
+          update();
+        });
+      }
+    }
   }
 }

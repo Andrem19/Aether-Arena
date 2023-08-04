@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/battle_controller.dart';
+import 'package:the_test_naruto_arena/elements/moveModalWindow.dart';
 
 class MoveButton extends StatelessWidget {
   double width;
@@ -11,7 +12,14 @@ class MoveButton extends StatelessWidget {
     return GetBuilder<BattleController>(
       builder: (controller) {
         return InkWell(
-          onTap: controller.timerValue.value == controller.timeOfMove? null : () {},
+          onTap: controller.timerValue.value == controller.timeOfMove? null : () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return MoveModalWindow();
+              },
+            );
+          },
           child: Stack(
             alignment: Alignment.center,
             children: [

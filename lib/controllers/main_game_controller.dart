@@ -37,19 +37,19 @@ class MainGameController extends GetxController {
   @override
   void onInit() async {
     characters = await GetStruct.deserializeJsonToList(Chars.chars);
-    for (var i = 0; i < characters.length; i++) {
-      print(characters[i].id);
-      print(characters[i].name);
-      print(characters[i].condition);
-      for (var j = 0; j < characters[i].allSkills.length; j++) {
-        print(characters[i].allSkills[j].id);
-        print(characters[i].allSkills[j].name);
-        for (var p = 0; p < characters[i].allSkills[j].effects.length; p++) {
-          print(characters[i].allSkills[j].effects[p].id);
-          print(characters[i].allSkills[j].effects[p].name);
-        }
-      }
-    }
+    // print(characters.length);
+    // for (var i = 0; i < characters.length; i++) {
+    //   print(characters[i].id);
+    //   print(characters[i].name);
+    //   print(characters[i].condition);
+    //   for (var j = 0; j < characters[i].allSkills.length; j++) {
+    //     print(characters[i].allSkills[j].id);
+    //     print(characters[i].allSkills[j].name);
+    //     for (var p = 0; p < characters[i].allSkills[j].effects.length; p++) {
+    //       print(characters[i].allSkills[j].effects[p].id);
+    //     }
+    //   }
+    // }
     for (var i = 0; i < 15; i++) {
       CharInBattle char = characters[i];
       characters.add(char);

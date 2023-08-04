@@ -8,7 +8,7 @@ class CharInTheBattle {
   static Widget getChar(bool isEnemy, CharInBattle char, double width) {
     return GetBuilder<BattleController>(builder: (controller) {
       bool isTarget = false;
-      if (isEnemy && char.health > 0 && controller.chooseTarget.value) {
+      if (isEnemy && char.stats.health > 0 && controller.chooseTarget.value) {
         isTarget = true;
       }
       return InkWell(
@@ -71,7 +71,7 @@ class CharInTheBattle {
                       ),
                     ),
                     Container(
-                      width: char.health / 100 * width * 0.18,
+                      width: char.stats.health / 30 * width * 0.18,
                       height: width * 0.03,
                       decoration: BoxDecoration(
                         color: Colors.lightGreen,
@@ -88,7 +88,7 @@ class CharInTheBattle {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
-                        "${char.health}%",
+                        "${char.stats.health}%",
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

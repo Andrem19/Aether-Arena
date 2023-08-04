@@ -14,133 +14,167 @@ class BattleFunc {
   }
 
   static void addEffects(
-      String owner, int whoAttackerId, Skill skill, int targetIfOne) {
+      String owner, CharInBattle whoAttacker, Skill skill, int targetIfOne) {
     var battleCont = Get.find<BattleController>();
     for (var i = 0; i < skill.effects.length; i++) {
       skill.effects[i].value = getEffectValue(
           skill.effects[i].value_min, skill.effects[i].value_max);
       if (skill.effects[i].target == Target.AllAliveAlly) {
-        if (battleCont.my_char_1.value.health > 0) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_1.value);
+        if (battleCont.my_char_1.value.stats.health > 0) {
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_1.value);
         }
-        if (battleCont.my_char_2.value.health > 0) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_2.value);
+        if (battleCont.my_char_2.value.stats.health > 0) {
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_2.value);
         }
-        if (battleCont.my_char_3.value.health > 0) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_3.value);
+        if (battleCont.my_char_3.value.stats.health > 0) {
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_3.value);
         }
       } else if (skill.effects[i].target == Target.AllAliveAnemy) {
-        if (battleCont.enemy_char_1.value.health > 0) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_1.value);
+        if (battleCont.enemy_char_1.value.stats.health > 0) {
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_1.value);
         }
-        if (battleCont.enemy_char_2.value.health > 0) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_2.value);
+        if (battleCont.enemy_char_2.value.stats.health > 0) {
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_2.value);
         }
-        if (battleCont.enemy_char_3.value.health > 0) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_3.value);
+        if (battleCont.enemy_char_3.value.stats.health > 0) {
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_3.value);
         }
       } else if (skill.effects[i].target == Target.AllAliveInGame) {
-        if (battleCont.my_char_1.value.health > 0) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_1.value);
+        if (battleCont.my_char_1.value.stats.health > 0) {
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_1.value);
         }
-        if (battleCont.my_char_2.value.health > 0) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_2.value);
+        if (battleCont.my_char_2.value.stats.health > 0) {
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_2.value);
         }
-        if (battleCont.my_char_3.value.health > 0) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_3.value);
+        if (battleCont.my_char_3.value.stats.health > 0) {
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_3.value);
         }
-        if (battleCont.enemy_char_1.value.health > 0) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_1.value);
+        if (battleCont.enemy_char_1.value.stats.health > 0) {
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_1.value);
         }
-        if (battleCont.enemy_char_2.value.health > 0) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_2.value);
+        if (battleCont.enemy_char_2.value.stats.health > 0) {
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_2.value);
         }
-        if (battleCont.enemy_char_3.value.health > 0) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_3.value);
+        if (battleCont.enemy_char_3.value.stats.health > 0) {
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_3.value);
         }
       } else if (skill.effects[i].target == Target.RandomEnemyTarget) {
         int rand = getAliveEnemyRand(battleCont);
         if (rand == 1) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_1.value);
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_1.value);
         } else if (rand == 2) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_2.value);
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_2.value);
         } else if (rand == 3) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_3.value);
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_3.value);
         }
       } else if (skill.effects[i].target == Target.RandomAllTarget) {
         int rand = getAliveAllRand(battleCont);
         if (rand == 1) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_1.value);
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_1.value);
         } else if (rand == 2) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_2.value);
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_2.value);
         } else if (rand == 3) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_3.value);
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_3.value);
         } else if (rand == 4) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_1.value);
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_1.value);
         } else if (rand == 5) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_2.value);
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_2.value);
         } else if (rand == 6) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_3.value);
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_3.value);
         }
       } else if (skill.effects[i].target == Target.SingleAlly) {
         if (targetIfOne == battleCont.my_char_1.value.id) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_1.value);
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_1.value);
         } else if (targetIfOne == battleCont.my_char_2.value.id) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_2.value);
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_2.value);
         } else if (targetIfOne == battleCont.my_char_3.value.id) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_3.value);
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_3.value);
         }
       } else if (skill.effects[i].target == Target.SingleEnemyTarget) {
         if (targetIfOne == battleCont.enemy_char_1.value.id) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_1.value);
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_1.value);
         } else if (targetIfOne == battleCont.enemy_char_2.value.id) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_2.value);
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_2.value);
         } else if (targetIfOne == battleCont.enemy_char_3.value.id) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.enemy_char_3.value);
+          addEffect(whoAttacker, owner, skill.effects[i],
+              battleCont.enemy_char_3.value);
         }
       } else if (skill.effects[i].target == Target.Myself) {
-        if (whoAttackerId == battleCont.my_char_1.value.id) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_1.value);
-        } else if (whoAttackerId == battleCont.my_char_2.value.id) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_2.value);
-        } else if (whoAttackerId == battleCont.my_char_3.value.id) {
-          addEffect(whoAttackerId, owner, skill.effects[i], battleCont.my_char_3.value);
+        if (whoAttacker == battleCont.my_char_1.value) {
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_1.value);
+        } else if (whoAttacker == battleCont.my_char_2.value) {
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_2.value);
+        } else if (whoAttacker == battleCont.my_char_3.value) {
+          addEffect(
+              whoAttacker, owner, skill.effects[i], battleCont.my_char_3.value);
         }
       }
     }
   }
 
-  static void execEffect(String myRole, Effect effect, CharInBattle targetChar,
-      CharInBattle attackerChar) {
+  static void execEffect(String myRole, Effect effect, CharInBattle targetChar) {
+    var battleCont = Get.find<BattleController>();
     if (myRole == effect.owner) {
-      if (targetChar.weaken > 0) {
-        targetChar.weaken--;
-      }
+      // if (targetChar.stats.weaken > 0) {
+      //   targetChar.stats.weaken--;
+      // }
       if (effect.typeOfAction == TypeOfAction.Attack) {
         int def = getDefence(targetChar);
         int damage = effect.value;
-        if (attackerChar.weaken > 0) {
+        if (effect.whoAttacker.stats.weaken > 0) {
           damage *= 0.75.toInt();
         }
         if (def < damage) {
           int rest = def - damage;
-          targetChar.health -= rest;
+          targetChar.stats.health -= rest;
         }
         reduceDefence(targetChar, damage);
       } else if (effect.typeOfAction == TypeOfAction.Defence) {
       } else if (effect.typeOfAction == TypeOfAction.Heal) {
-        targetChar.health += effect.value;
+        battleCont.addRemoveHealsAnimated(targetChar, true, effect.value);
       } else if (effect.typeOfAction == TypeOfAction.Poison) {
+        targetChar.stats.poison += effect.value;
       } else if (effect.typeOfAction == TypeOfAction.Break) {
+        targetChar.stats.fragility++;
       } else if (effect.typeOfAction == TypeOfAction.Dexterity) {
+        targetChar.stats.dexterity += effect.value;
       } else if (effect.typeOfAction == TypeOfAction.Intelligence) {
+        targetChar.stats.intelligence += effect.value;
       } else if (effect.typeOfAction == TypeOfAction.Strength) {
+        targetChar.stats.strength += effect.value;
       } else if (effect.typeOfAction == TypeOfAction.Weaken) {
-        targetChar.weaken++;
+        targetChar.stats.weaken++;
       }
-
       if (effect.durationRaund < 1000) {
-        effect.durationRaund -= 1;
+        effect.durationRaund--;
       }
       if (effect.durationRaund < 1) {
         targetChar.attachedEffects.remove(effect);
@@ -148,19 +182,21 @@ class BattleFunc {
     }
   }
 
-  static void addEffect(int whoAttakerId, String owner, Effect effect, CharInBattle char) {
+  static void addEffect(
+      CharInBattle whoAttaker, String owner, Effect effect, CharInBattle char) {
     effect.owner = owner;
+    effect.whoAttacker = whoAttaker;
     char.attachedEffects.add(effect);
   }
 
   static int getAliveEnemyRand(BattleController battleCont) {
     int rand = Random().nextInt(3) + 1;
-    if ((rand == 1 && battleCont.enemy_char_1.value.health <= 0) ||
-        (rand == 2 && battleCont.enemy_char_2.value.health <= 0) ||
-        (rand == 3 && battleCont.enemy_char_3.value.health <= 0)) {
-      if (battleCont.enemy_char_1.value.health <= 0 &&
-          battleCont.enemy_char_2.value.health <= 0 &&
-          battleCont.enemy_char_3.value.health <= 0) {
+    if ((rand == 1 && battleCont.enemy_char_1.value.stats.health <= 0) ||
+        (rand == 2 && battleCont.enemy_char_2.value.stats.health <= 0) ||
+        (rand == 3 && battleCont.enemy_char_3.value.stats.health <= 0)) {
+      if (battleCont.enemy_char_1.value.stats.health <= 0 &&
+          battleCont.enemy_char_2.value.stats.health <= 0 &&
+          battleCont.enemy_char_3.value.stats.health <= 0) {
         return 0;
       }
       getAliveEnemyRand(battleCont);
@@ -170,18 +206,18 @@ class BattleFunc {
 
   static int getAliveAllRand(BattleController battleCont) {
     int rand = Random().nextInt(6) + 1;
-    if ((rand == 1 && battleCont.enemy_char_1.value.health <= 0) ||
-        (rand == 2 && battleCont.enemy_char_2.value.health <= 0) ||
-        (rand == 3 && battleCont.enemy_char_3.value.health <= 0) ||
-        (rand == 4 && battleCont.my_char_1.value.health <= 0) ||
-        (rand == 5 && battleCont.my_char_2.value.health <= 0) ||
-        (rand == 6 && battleCont.my_char_3.value.health <= 0)) {
-      if (battleCont.enemy_char_1.value.health <= 0 &&
-          battleCont.enemy_char_2.value.health <= 0 &&
-          battleCont.enemy_char_3.value.health <= 0 &&
-          battleCont.my_char_1.value.health <= 0 &&
-          battleCont.my_char_2.value.health <= 0 &&
-          battleCont.my_char_3.value.health <= 0) {
+    if ((rand == 1 && battleCont.enemy_char_1.value.stats.health <= 0) ||
+        (rand == 2 && battleCont.enemy_char_2.value.stats.health <= 0) ||
+        (rand == 3 && battleCont.enemy_char_3.value.stats.health <= 0) ||
+        (rand == 4 && battleCont.my_char_1.value.stats.health <= 0) ||
+        (rand == 5 && battleCont.my_char_2.value.stats.health <= 0) ||
+        (rand == 6 && battleCont.my_char_3.value.stats.health <= 0)) {
+      if (battleCont.enemy_char_1.value.stats.health <= 0 &&
+          battleCont.enemy_char_2.value.stats.health <= 0 &&
+          battleCont.enemy_char_3.value.stats.health <= 0 &&
+          battleCont.my_char_1.value.stats.health <= 0 &&
+          battleCont.my_char_2.value.stats.health <= 0 &&
+          battleCont.my_char_3.value.stats.health <= 0) {
         return 0;
       }
       getAliveAllRand(battleCont);

@@ -32,17 +32,20 @@ class ChoosenSkill {
   }
 
   static Skill getSkillFromMove(int position, BattleController cont) {
+    print(cont.my_char_1.value.allSkills);
+    print('---------------');
+    print(cont.my_move.char_1.skillId);
     if (cont.my_move.isNew) {
       switch (position) {
         case 1:
           return cont.my_char_1.value.allSkills.firstWhere(
-              (element) => element.id == cont.my_move.char_1.skillId);
+              (element) => element.id == cont.my_move.char_1.skillId, orElse: () => Skill.getEmpty());
         case 2:
           return cont.my_char_2.value.allSkills.firstWhere(
-              (element) => element.id == cont.my_move.char_2.skillId);
+              (element) => element.id == cont.my_move.char_2.skillId, orElse: () => Skill.getEmpty());
         case 3:
           return cont.my_char_3.value.allSkills.firstWhere(
-              (element) => element.id == cont.my_move.char_3.skillId);
+              (element) => element.id == cont.my_move.char_3.skillId, orElse: () => Skill.getEmpty());
         default:
           return Skill.getEmpty();
       }

@@ -1,14 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:the_test_naruto_arena/models/char_in_battle.dart';
+
 import 'enum_serializer.dart';
 import 'enums.dart';
 
 class Effect {
   int id;
   String owner;
-  int whoAttackerId;
-  String name;
+  CharInBattle whoAttacker;
   int value;
   int value_min;
   int value_max;
@@ -20,8 +21,7 @@ class Effect {
   Effect({
     required this.id,
     required this.owner,
-    required this.whoAttackerId,
-    required this.name,
+    required this.whoAttacker,
     required this.value,
     required this.value_min,
     required this.value_max,
@@ -34,8 +34,7 @@ class Effect {
     return Effect(
       id: 0,
       owner: '',
-      whoAttackerId: 0,
-      name: 'null',
+      whoAttacker: CharInBattle.empty(),
       value: 0,
       value_min: 0,
       value_max: 0,
@@ -55,8 +54,7 @@ class Effect {
     return Effect(
       id: json['id'],
       owner: json['owner'],
-      whoAttackerId: json['whoAttackerId'],
-      name: json['name'],
+      whoAttacker: CharInBattle.fromMap(json['whoAttackerId']),
       value: json['value'],
       value_min: json['value_min'],
       value_max: json['value_max'],
@@ -70,8 +68,7 @@ class Effect {
   Map<String, dynamic> toMap() => {
         'id': id,
         'owner': owner,
-        'whoAttackerId': whoAttackerId,
-        'name': name,
+        'whoAttackerId': whoAttacker.toMap(),
         'value': value,
         'value_min': value_min,
         'value_max': value_max,

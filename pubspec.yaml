@@ -77,6 +77,7 @@ flutter:
     - assets/images/Priest.jpg
     - assets/default_avatar.jpg
     - assets/default_skill.jpg
+    - assets/skill.jpg
     - assets/none_char.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

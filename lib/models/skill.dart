@@ -15,7 +15,6 @@ class Skill {
   String img;
   Map<Energy, int> requiredEnergy;
   Target target;
-  int effect_id;
   int cooldownValue;
   int cooldown;
   List<Effect> effects;
@@ -26,7 +25,6 @@ class Skill {
     required this.img,
     required this.requiredEnergy,
     required this.target,
-    required this.effect_id,
     required this.cooldownValue,
     required this.cooldown,
     required this.effects,
@@ -39,7 +37,6 @@ class Skill {
       img: '',
       requiredEnergy: {},
       target: Target.None,
-      effect_id: 0,
       cooldownValue: 0,
       cooldown: 0,
       effects: [],
@@ -65,7 +62,6 @@ class Skill {
       img: img ?? this.img,
       requiredEnergy: requiredEnergy ?? this.requiredEnergy,
       target: target ?? this.target,
-      effect_id: effect_id ?? this.effect_id,
       cooldownValue: cooldownValue ?? this.cooldownValue,
       cooldown: cooldown ?? this.cooldown,
       effects: effects ?? this.effects,
@@ -82,7 +78,6 @@ class Skill {
       'img': img,
       'requiredEnergy': requiredEnergyAsString,
       'target': EnumSerializer.targetToString(target),
-      'effect_id': effect_id,
       'cooldownValue': cooldownValue,
       'cooldown': cooldown,
       'effects': effects.map((x) => x.toMap()).toList(),
@@ -101,7 +96,6 @@ class Skill {
             MapEntry(EnumSerializer.energyFromString(key), value as int),
       )),
       target: EnumSerializer.targetFromString(map['target']),
-      effect_id: map['effect_id'] as int,
       cooldownValue: map['cooldownValue'] as int,
       cooldown: map['cooldown'] as int,
       effects: List<Effect>.from(
@@ -131,6 +125,7 @@ class Skill {
         other.description == description &&
         other.img == img &&
         mapEquals(other.requiredEnergy, requiredEnergy) &&
+        other.target == target &&
         other.cooldownValue == cooldownValue &&
         other.cooldown == cooldown &&
         listEquals(other.effects, effects);
@@ -143,6 +138,7 @@ class Skill {
         description.hashCode ^
         img.hashCode ^
         requiredEnergy.hashCode ^
+        target.hashCode ^
         cooldownValue.hashCode ^
         cooldown.hashCode ^
         effects.hashCode;
