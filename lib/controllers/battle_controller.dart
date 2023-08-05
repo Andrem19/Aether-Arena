@@ -16,6 +16,8 @@ import 'main_game_controller.dart';
 class BattleController extends GetxController {
   int timeOfMove = 21;
   RxString infoText = ''.obs;
+  Rx<Map<Energy, int>> needCurrentSkill = Rx<Map<Energy, int>>({
+  });
   String enemy_role = 'B';
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final MainGameController _mainContr = Get.find<MainGameController>();
@@ -28,8 +30,14 @@ class BattleController extends GetxController {
     Energy.WILLPOWER: 1,
     Energy.RANDOM: 0,
   });
-  RxBool chooseTarget = false.obs;
+  RxBool chooseTargetEnemy = false.obs;
+  RxBool chooseTargetAlly = false.obs;
+  RxBool chooseTargetAll = false.obs;
+  RxBool chooseTargetMe = false.obs;
   RxBool enemyClicable = false.obs;
+  RxBool allyClicable = false.obs;
+  RxBool allClicable = false.obs;
+  RxBool meClicable = false.obs;
   Move my_move = Move.empty();
   Move enemy_move = Move.empty();
   Focus focus = Focus.empty();
@@ -318,19 +326,24 @@ class BattleController extends GetxController {
     focus.clearFocus();
   }
 
-  void startTimerBliking() {
-    enemyClicable.value = true;
+  void startTimerBliking(RxBool target) {
     _timer_bliking?.cancel();
     _timer_bliking = Timer.periodic(Duration(milliseconds: 800), (Timer timer) {
-      chooseTarget.value = !chooseTarget.value;
+      target.value = !target.value;
       update();
     });
   }
 
   void stopTimerBlinking() {
     enemyClicable.value = false;
+    allyClicable.value = false;
+    allClicable.value = false;
+    meClicable.value = false;
     _timer_bliking?.cancel();
-    chooseTarget.value = false;
+    chooseTargetEnemy.value = false;
+    chooseTargetAlly.value = false;
+    chooseTargetAll.value = false;
+    chooseTargetMe.value = false;
     update();
   }
 

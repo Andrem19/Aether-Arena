@@ -14,15 +14,33 @@ class BattleMySkill {
       return InkWell(
         onTap: () {
           if (isSkillAvalible) {
+            controller.stopTimerBlinking();
             var main_cont = Get.find<MainGameController>();
             controller.charFocus = position;
             controller.skillFocus = skill.id;
             controller.infoText.value = skill.description;
+            controller.needCurrentSkill.value = skill.requiredEnergy;
             controller.setCharFocus(getCharId(position, controller));
             controller.setSkillFocus(skill);
-            controller.chooseTarget.value = true;
-            controller.startTimerBliking();
+            if (skill.target == Target.AllAliveAlly ||
+                skill.target == Target.SingleAlly) {
+              controller.allyClicable.value = true;
+              controller.startTimerBliking(controller.chooseTargetAlly);
+            } else if (skill.target == Target.AllAliveAnemy ||
+                skill.target == Target.SingleEnemyTarget ||
+                skill.target == Target.RandomEnemyTarget) {
+              controller.enemyClicable.value = true;
+              controller.startTimerBliking(controller.chooseTargetEnemy);
+            } else if (skill.target == Target.AllAliveInGame ||
+                skill.target == Target.RandomAllTarget) {
+              controller.allClicable.value = true;
+              controller.startTimerBliking(controller.chooseTargetAll);
+            } else if (skill.target == Target.Myself) {
+              controller.meClicable.value = true;
+              controller.startTimerBliking(controller.chooseTargetMe);
+            }
           } else {
+            controller.needCurrentSkill.value = skill.requiredEnergy;
             controller.charFocus = position;
             controller.skillFocus = 0;
             controller.infoText.value = skill.description;
@@ -96,7 +114,6 @@ class BattleMySkill {
           }
           energy[key] = energy[key]! - value;
         }
-        
       }
     }
 
