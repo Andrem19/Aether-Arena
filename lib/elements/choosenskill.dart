@@ -32,9 +32,6 @@ class ChoosenSkill {
   }
 
   static Skill getSkillFromMove(int position, BattleController cont) {
-    print(cont.my_char_1.value.allSkills);
-    print('---------------');
-    print(cont.my_move.char_1.skillId);
     if (cont.my_move.isNew) {
       switch (position) {
         case 1:

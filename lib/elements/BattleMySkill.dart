@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/battle_controller.dart';
 import 'package:the_test_naruto_arena/controllers/main_game_controller.dart';
+import 'package:the_test_naruto_arena/models/enums.dart';
 
 import '../models/skill.dart';
 
@@ -9,6 +10,7 @@ class BattleMySkill {
   static Widget getMySkill(int position, Skill skill, double width) {
     return GetBuilder<BattleController>(builder: (controller) {
       bool isSkillAvalible = isAvailable(skill, controller);
+      print('isSkillAvalible: $isSkillAvalible');
       return InkWell(
         onTap: () {
           if (isSkillAvalible) {
@@ -81,13 +83,36 @@ class BattleMySkill {
   }
 
   static bool isAvailable(Skill skill, BattleController cont) {
+    Map<Energy, int> energy = Map.from(cont.myEnergy.value);
+
     if (skill.requiredEnergy.isNotEmpty) {
       for (var entry in skill.requiredEnergy.entries) {
         var key = entry.key;
         var value = entry.value;
-        if (cont.myEnergy.value[key]! < value) {
-          return false;
+
+        if (key != Energy.RANDOM) {
+          if (energy[key]! < value) {
+            return false;
+          }
+          energy[key] = energy[key]! - value;
         }
+        
+      }
+    }
+
+    Map<Energy, int> reqEnergy = Map.from(skill.requiredEnergy);
+    if (reqEnergy.containsKey(Energy.RANDOM)) {
+      int sum = 0;
+      for (var entry in energy.entries) {
+        var key = entry.key;
+        var value = entry.value;
+        if (key != Energy.RANDOM) {
+          sum += energy[key]!;
+        }
+      }
+
+      if (sum < reqEnergy[Energy.RANDOM]!) {
+        return false;
       }
     }
     return true;

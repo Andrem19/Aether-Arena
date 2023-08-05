@@ -24,7 +24,7 @@ class BattleController extends GetxController {
   Rx<Map<Energy, int>> myEnergy = Rx<Map<Energy, int>>({
     Energy.ARCANE: 2,
     Energy.PHYSICAL: 0,
-    Energy.UNIQUE: 0,
+    Energy.UNIQUE: 1,
     Energy.WILLPOWER: 1,
     Energy.RANDOM: 0,
   });
@@ -57,8 +57,8 @@ class BattleController extends GetxController {
 
   @override
   void onInit() async {
-    await setUpVars();
-    _startListener();
+    // await setUpVars();
+    // _startListener();
     super.onInit();
   }
 
@@ -69,6 +69,11 @@ class BattleController extends GetxController {
     _timer?.cancel();
     _timer_bliking?.cancel();
     super.onClose();
+  }
+
+  Future<void> startGame() async {
+    await setUpVars();
+    _startListener();
   }
 
   Future<void> setUpVars() async {
@@ -291,7 +296,6 @@ class BattleController extends GetxController {
   }
 
   void passFocusToTheMove() {
-    print(focus);
     if (focus.myCharId == my_char_1.value.id) {
       my_move.char_1.skillId = focus.skill_id;
       my_move.char_1.target = focus.target;
@@ -311,7 +315,6 @@ class BattleController extends GetxController {
       my_move.char_3.empty = false;
       my_move.isNew = true;
     }
-    print(my_move);
     focus.clearFocus();
   }
 

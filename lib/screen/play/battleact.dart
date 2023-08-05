@@ -24,7 +24,7 @@ class BattleAct extends StatelessWidget {
   Widget build(BuildContext context) {
     var cont = Get.find<BattleController>();
     return FutureBuilder(
-        future: cont.setUpVars(),
+        future: cont.startGame(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return GetBuilder<BattleController>(initState: (state) {

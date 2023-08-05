@@ -12,14 +12,14 @@ class MoveButton extends StatelessWidget {
     return GetBuilder<BattleController>(
       builder: (controller) {
         return InkWell(
-          onTap: controller.timerValue.value == controller.timeOfMove? null : () {
+          onTap: controller.whoIsMove.value == controller.myRole? () {
             showDialog(
               context: context,
               builder: (BuildContext context) {
                 return MoveModalWindow();
               },
             );
-          },
+          } : null,
           child: Stack(
             alignment: Alignment.center,
             children: [
