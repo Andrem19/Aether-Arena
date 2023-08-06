@@ -20,22 +20,66 @@ class Move {
     required this.char_3,
   });
 
+  int get totalRandomEnergy {
+    int sum = 0;
+    if (char_1.skill.requiredEnergy.containsKey(Energy.RANDOM)) {
+      sum += char_1.skill.requiredEnergy[Energy.RANDOM]!;
+    }
+    if (char_2.skill.requiredEnergy.containsKey(Energy.RANDOM)) {
+      sum += char_2.skill.requiredEnergy[Energy.RANDOM]!;
+    }
+    if (char_3.skill.requiredEnergy.containsKey(Energy.RANDOM)) {
+      sum += char_3.skill.requiredEnergy[Energy.RANDOM]!;
+    }
+    return sum;
+  }
+
   static Move empty() {
     return Move(
       moveNumber: 0,
       isNew: false,
-      char_1: Hit(empty: true, target: Target.None, ifOneWho: 0, skillId: 0),
-      char_2: Hit(empty: true, target: Target.None, ifOneWho: 0, skillId: 0),
-      char_3: Hit(empty: true, target: Target.None, ifOneWho: 0, skillId: 0),
+      char_1: Hit(
+          empty: true,
+          target: Target.None,
+          skill: Skill.getEmpty(),
+          ifOneWho: 0,
+          skillId: 0),
+      char_2: Hit(
+          empty: true,
+          target: Target.None,
+          skill: Skill.getEmpty(),
+          ifOneWho: 0,
+          skillId: 0),
+      char_3: Hit(
+          empty: true,
+          target: Target.None,
+          skill: Skill.getEmpty(),
+          ifOneWho: 0,
+          skillId: 0),
     );
   }
 
   void toEmpty() {
     moveNumber = 0;
     isNew = false;
-    char_1 = Hit(empty: true, target: Target.None, ifOneWho: 0, skillId: 0);
-    char_2 = Hit(empty: true, target: Target.None, ifOneWho: 0, skillId: 0);
-    char_3 = Hit(empty: true, target: Target.None, ifOneWho: 0, skillId: 0);
+    char_1 = Hit(
+        empty: true,
+        target: Target.None,
+        skill: Skill.getEmpty(),
+        ifOneWho: 0,
+        skillId: 0);
+    char_2 = Hit(
+        empty: true,
+        target: Target.None,
+        skill: Skill.getEmpty(),
+        ifOneWho: 0,
+        skillId: 0);
+    char_3 = Hit(
+        empty: true,
+        target: Target.None,
+        skill: Skill.getEmpty(),
+        ifOneWho: 0,
+        skillId: 0);
   }
 
   Move copyWith({
@@ -108,11 +152,13 @@ class Move {
 class Hit {
   bool empty;
   Target target;
+  Skill skill;
   int ifOneWho;
   int skillId;
   Hit({
     required this.empty,
     required this.target,
+    required this.skill,
     required this.ifOneWho,
     required this.skillId,
   });
@@ -120,21 +166,32 @@ class Hit {
   Hit copyWith({
     bool? empty,
     Target? target,
+    Skill? skill,
     int? ifOneWho,
     int? skillId,
   }) {
     return Hit(
       empty: empty ?? this.empty,
       target: target ?? this.target,
+      skill: skill ?? this.skill,
       ifOneWho: ifOneWho ?? this.ifOneWho,
       skillId: skillId ?? this.skillId,
     );
+  }
+
+  void toEmpty() {
+    empty = true;
+    target = Target.None;
+    skill = Skill.getEmpty();
+    ifOneWho = 0;
+    skillId = 0;
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'empty': empty,
       'target': EnumSerializer.targetToString(target),
+      'skill': skill.toJson(),
       'ifOneWho': ifOneWho,
       'skillId': skillId,
     };
@@ -144,6 +201,7 @@ class Hit {
     return Hit(
       empty: map['empty'] as bool,
       target: EnumSerializer.targetFromString(map['target']),
+      skill: Skill.fromMap(map['skill']),
       ifOneWho: map['ifOneWho'] as int,
       skillId: map['skillId'] as int,
     );
@@ -162,13 +220,18 @@ class Hit {
   bool operator ==(covariant Hit other) {
     if (identical(this, other)) return true;
 
-    return
-    other.empty == empty &&
-     other.target == target &&
+    return other.empty == empty &&
+        other.target == target &&
+        other.skill == skill &&
         other.ifOneWho == ifOneWho &&
         other.skillId == skillId;
   }
 
   @override
-  int get hashCode => empty.hashCode ^ target.hashCode ^ ifOneWho.hashCode ^ skillId.hashCode;
+  int get hashCode =>
+      empty.hashCode ^
+      target.hashCode ^
+      skill.hashCode ^
+      ifOneWho.hashCode ^
+      skillId.hashCode;
 }

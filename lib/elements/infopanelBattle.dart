@@ -8,6 +8,7 @@ class BattleInfoPanel {
   static Widget getPanel(double width) {
     return GetBuilder<BattleController>(
       builder: (controller) {
+        bool isLongText = controller.infoText.value.length > 110;
         return Padding(
           padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
           child: Container(
@@ -25,11 +26,12 @@ class BattleInfoPanel {
                         controller.infoText.value,
                         style: TextStyle(
                           color: Colors.black,
+                          fontSize: isLongText ? 12.0 : null,
                         ),
                         textAlign: TextAlign.center,
-                        maxLines: 7,
+                        maxLines: 5,
                       ),
-                      SizedBox(height: 8),
+                      SizedBox(height: 5),
                     ],
                   ),
                 ),
@@ -38,7 +40,7 @@ class BattleInfoPanel {
                   right: 0,
                   left: 0,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children:
                         getEnergySquares(controller.needCurrentSkill.value),
                   ),
@@ -50,7 +52,6 @@ class BattleInfoPanel {
       },
     );
   }
-
   static List<Widget> getEnergySquares(Map<Energy, int> needEnergy) {
     List<Widget> listSquares = [];
     if (needEnergy.containsKey(Energy.ARCANE)) {

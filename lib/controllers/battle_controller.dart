@@ -16,8 +16,7 @@ import 'main_game_controller.dart';
 class BattleController extends GetxController {
   int timeOfMove = 21;
   RxString infoText = ''.obs;
-  Rx<Map<Energy, int>> needCurrentSkill = Rx<Map<Energy, int>>({
-  });
+  Rx<Map<Energy, int>> needCurrentSkill = Rx<Map<Energy, int>>({});
   String enemy_role = 'B';
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final MainGameController _mainContr = Get.find<MainGameController>();
@@ -28,8 +27,21 @@ class BattleController extends GetxController {
     Energy.PHYSICAL: 0,
     Energy.UNIQUE: 1,
     Energy.WILLPOWER: 1,
-    Energy.RANDOM: 0,
   });
+  Rx<Map<Energy, int>> randomIGive = Rx<Map<Energy, int>>({
+    Energy.ARCANE: 0,
+    Energy.PHYSICAL: 0,
+    Energy.UNIQUE: 0,
+    Energy.WILLPOWER: 0,
+  });
+  int get totalEnergyCount {
+    int sum = 0;
+    myEnergy.value.forEach((energy, count) {
+      sum += count;
+    });
+    return sum;
+  }
+
   RxBool chooseTargetEnemy = false.obs;
   RxBool chooseTargetAlly = false.obs;
   RxBool chooseTargetAll = false.obs;
@@ -38,7 +50,7 @@ class BattleController extends GetxController {
   RxBool allyClicable = false.obs;
   RxBool allClicable = false.obs;
   RxBool meClicable = false.obs;
-  Move my_move = Move.empty();
+  Rx<Move> my_move = Move.empty().obs;
   Move enemy_move = Move.empty();
   Focus focus = Focus.empty();
 
@@ -212,19 +224,19 @@ class BattleController extends GetxController {
   }
 
   void applyMyMove() {
-    if (my_move.isNew == true) {
+    if (my_move.value.isNew == true) {
       Skill skill_1 =
-          BattleFunc.getAttackSkill(my_char_1.value, my_move.char_1.skillId);
+          BattleFunc.getAttackSkill(my_char_1.value, my_move.value.char_1.skillId);
       BattleFunc.addEffects(
-          myRole, my_char_1.value, skill_1, my_move.char_1.ifOneWho);
+          myRole, my_char_1.value, skill_1, my_move.value.char_1.ifOneWho);
       Skill skill_2 =
-          BattleFunc.getAttackSkill(my_char_2.value, my_move.char_2.skillId);
+          BattleFunc.getAttackSkill(my_char_2.value, my_move.value.char_2.skillId);
       BattleFunc.addEffects(
-          myRole, my_char_2.value, skill_2, my_move.char_2.ifOneWho);
+          myRole, my_char_2.value, skill_2, my_move.value.char_2.ifOneWho);
       Skill skill_3 =
-          BattleFunc.getAttackSkill(my_char_3.value, my_move.char_3.skillId);
+          BattleFunc.getAttackSkill(my_char_3.value, my_move.value.char_3.skillId);
       BattleFunc.addEffects(
-          myRole, my_char_3.value, skill_3, my_move.char_3.ifOneWho);
+          myRole, my_char_3.value, skill_3, my_move.value.char_3.ifOneWho);
     }
   }
 
@@ -296,7 +308,6 @@ class BattleController extends GetxController {
 
   void setTarget(int targetId) {
     focus.setUpTarget_id(targetId);
-    passFocusToTheMove();
   }
 
   void clearFocus() {
@@ -305,25 +316,93 @@ class BattleController extends GetxController {
 
   void passFocusToTheMove() {
     if (focus.myCharId == my_char_1.value.id) {
-      my_move.char_1.skillId = focus.skill_id;
-      my_move.char_1.target = focus.target;
-      my_move.char_1.ifOneWho = focus.target_idIfOne;
-      my_move.char_1.empty = false;
-      my_move.isNew = true;
+      if (!my_move.value.char_1.empty) {
+        returnEnergy(my_move.value.char_1.skill);
+      }
+      my_move.value.char_1.skillId = focus.skill_id;
+      my_move.value.char_1.target = focus.target;
+      my_move.value.char_1.skill = focus.skill;
+      my_move.value.char_1.ifOneWho = focus.target_idIfOne;
+      my_move.value.char_1.empty = false;
+      my_move.value.isNew = true;
     } else if (focus.myCharId == my_char_2.value.id) {
-      my_move.char_2.skillId = focus.skill_id;
-      my_move.char_2.target = focus.target;
-      my_move.char_2.ifOneWho = focus.target_idIfOne;
-      my_move.char_2.empty = false;
-      my_move.isNew = true;
+      if (!my_move.value.char_2.empty) {
+        returnEnergy(my_move.value.char_2.skill);
+      }
+      my_move.value.char_2.skillId = focus.skill_id;
+      my_move.value.char_2.target = focus.target;
+      my_move.value.char_2.skill = focus.skill;
+      my_move.value.char_2.ifOneWho = focus.target_idIfOne;
+      my_move.value.char_2.empty = false;
+      my_move.value.isNew = true;
     } else if (focus.myCharId == my_char_3.value.id) {
-      my_move.char_3.skillId = focus.skill_id;
-      my_move.char_3.target = focus.target;
-      my_move.char_3.ifOneWho = focus.target_idIfOne;
-      my_move.char_3.empty = false;
-      my_move.isNew = true;
+      if (!my_move.value.char_3.empty) {
+        returnEnergy(my_move.value.char_3.skill);
+      }
+      my_move.value.char_3.skillId = focus.skill_id;
+      my_move.value.char_3.target = focus.target;
+      my_move.value.char_3.skill = focus.skill;
+      my_move.value.char_3.ifOneWho = focus.target_idIfOne;
+      my_move.value.char_3.empty = false;
+      my_move.value.isNew = true;
+    }
+    subtractEnergy(focus.skill);
+    update();
+  }
+
+  void subtractEnergy(Skill skill) {
+    if (skill.requiredEnergy.containsKey(Energy.ARCANE)) {
+      int res =
+          myEnergy.value[Energy.ARCANE]! - skill.requiredEnergy[Energy.ARCANE]!;
+      myEnergy.value[Energy.ARCANE] = res;
+    }
+
+    if (skill.requiredEnergy.containsKey(Energy.PHYSICAL)) {
+      int res = myEnergy.value[Energy.PHYSICAL]! -
+          skill.requiredEnergy[Energy.PHYSICAL]!;
+      myEnergy.value[Energy.PHYSICAL] = res;
+    }
+
+    if (skill.requiredEnergy.containsKey(Energy.UNIQUE)) {
+      int res =
+          myEnergy.value[Energy.UNIQUE]! - skill.requiredEnergy[Energy.UNIQUE]!;
+      myEnergy.value[Energy.UNIQUE] = res;
+    }
+
+    if (skill.requiredEnergy.containsKey(Energy.WILLPOWER)) {
+      int res = myEnergy.value[Energy.WILLPOWER]! -
+          skill.requiredEnergy[Energy.WILLPOWER]!;
+      myEnergy.value[Energy.WILLPOWER] = res;
     }
     focus.clearFocus();
+    update();
+  }
+
+  void returnEnergy(Skill skill) {
+    if (skill.requiredEnergy.containsKey(Energy.ARCANE)) {
+      int res =
+          myEnergy.value[Energy.ARCANE]! + skill.requiredEnergy[Energy.ARCANE]!;
+      myEnergy.value[Energy.ARCANE] = res;
+    }
+
+    if (skill.requiredEnergy.containsKey(Energy.PHYSICAL)) {
+      int res = myEnergy.value[Energy.PHYSICAL]! +
+          skill.requiredEnergy[Energy.PHYSICAL]!;
+      myEnergy.value[Energy.PHYSICAL] = res;
+    }
+
+    if (skill.requiredEnergy.containsKey(Energy.UNIQUE)) {
+      int res =
+          myEnergy.value[Energy.UNIQUE]! + skill.requiredEnergy[Energy.UNIQUE]!;
+      myEnergy.value[Energy.UNIQUE] = res;
+    }
+
+    if (skill.requiredEnergy.containsKey(Energy.WILLPOWER)) {
+      int res = myEnergy.value[Energy.WILLPOWER]! +
+          skill.requiredEnergy[Energy.WILLPOWER]!;
+      myEnergy.value[Energy.WILLPOWER] = res;
+    }
+    update();
   }
 
   void startTimerBliking(RxBool target) {
@@ -365,4 +444,38 @@ class BattleController extends GetxController {
       }
     }
   }
+
+  void subtractRandomEnergy(Energy energyType) {
+  if (myEnergy.value.containsKey(energyType)) {
+    int currentEnergy = myEnergy.value[energyType] ?? 0;
+    if (currentEnergy > 0) {
+      myEnergy.value[energyType] = currentEnergy - 1;
+
+      int currentRandomGive = randomIGive.value[energyType] ?? 0;
+      randomIGive.value[energyType] = currentRandomGive + 1;
+    }
+  }
+  update();
+}
+
+void returnRandomEnergy(Energy energyType) {
+  if (myEnergy.value.containsKey(energyType)) {
+    int currentEnergy = myEnergy.value[energyType] ?? 0;
+    int currentRandomGive = randomIGive.value[energyType] ?? 0;
+
+    if (currentRandomGive > 0) {
+      myEnergy.value[energyType] = currentEnergy + 1;
+      randomIGive.value[energyType] = currentRandomGive - 1;
+    }
+  }
+  update();
+}
+
+  void transferEnergyBack() {
+  myEnergy.value.forEach((energy, value) {
+    myEnergy.value[energy] = value + randomIGive.value[energy]!;
+    randomIGive.value[energy] = 0;
+  });
+}
+  
 }

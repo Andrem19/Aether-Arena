@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:the_test_naruto_arena/controllers/battle_controller.dart';
 import 'package:the_test_naruto_arena/controllers/main_game_controller.dart';
 import 'package:the_test_naruto_arena/models/enums.dart';
+import 'package:the_test_naruto_arena/services/battle_func.dart';
 
 import '../models/skill.dart';
 
@@ -10,10 +11,9 @@ class BattleMySkill {
   static Widget getMySkill(int position, Skill skill, double width) {
     return GetBuilder<BattleController>(builder: (controller) {
       bool isSkillAvalible = isAvailable(skill, controller);
-      print('isSkillAvalible: $isSkillAvalible');
       return InkWell(
         onTap: () {
-          if (isSkillAvalible) {
+          if (isSkillAvalible && controller.myRole == controller.whoIsMove.value) {
             controller.stopTimerBlinking();
             var main_cont = Get.find<MainGameController>();
             controller.charFocus = position;
@@ -53,7 +53,7 @@ class BattleMySkill {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 3, 8, 3),
           child: Opacity(
-            opacity: isSkillAvalible ? 1.0 : 0.4,
+            opacity: isSkillAvalible && controller.myRole == controller.whoIsMove.value ? 1.0 : 0.4,
             child: Container(
               width: width * 0.1,
               height: width * 0.1,
@@ -118,17 +118,19 @@ class BattleMySkill {
     }
 
     Map<Energy, int> reqEnergy = Map.from(skill.requiredEnergy);
-    if (reqEnergy.containsKey(Energy.RANDOM)) {
+    
       int sum = 0;
       for (var entry in energy.entries) {
         var key = entry.key;
         var value = entry.value;
-        if (key != Energy.RANDOM) {
           sum += energy[key]!;
-        }
       }
-
-      if (sum < reqEnergy[Energy.RANDOM]!) {
+    if (reqEnergy.containsKey(Energy.RANDOM)) {
+      if (sum < (reqEnergy[Energy.RANDOM]! + cont.my_move.value.totalRandomEnergy)) {
+        return false;
+      }
+    } else {
+      if (sum < cont.my_move.value.totalRandomEnergy) {
         return false;
       }
     }

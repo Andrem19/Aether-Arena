@@ -258,4 +258,11 @@ class BattleFunc {
       }
     }
   }
+  static int getEnergySum(Map<Energy, int> map) {
+    int sum = 0;
+    map.forEach((energy, count) {
+      sum += count;
+    });
+    return sum;
+  }
 }

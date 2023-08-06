@@ -7,12 +7,14 @@ class Focus {
   bool isEmpty;
   int myCharId;
   int skill_id;
+  Skill skill;
   Target target;
   int target_idIfOne;
   Focus({
     required this.isEmpty,
     required this.myCharId,
     required this.skill_id,
+    required this.skill,
     required this.target,
     required this.target_idIfOne,
   });
@@ -21,6 +23,7 @@ class Focus {
     return Focus(
         isEmpty: true,
         myCharId: 0,
+        skill: Skill.getEmpty(),
         skill_id: 0,
         target: Target.None,
         target_idIfOne: 0);
@@ -44,13 +47,9 @@ class Focus {
       CharInBattle char = chars.firstWhere((element) => element.id == myCharId,
           orElse: CharInBattle.empty);
       if (char != CharInBattle.empty()) {
-        var skill = char.allSkills.firstWhere(
-            (element) => element.id == current_skill.id,
-            orElse: Skill.getEmpty);
-        if (skill != Skill.getEmpty()) {
-          skill_id = current_skill.id;
-          target = current_skill.target;
-        }
+        skill_id = current_skill.id;
+        skill = current_skill;
+        target = current_skill.target;
       }
     } else {
       print('Skill cant be choosen');

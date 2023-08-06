@@ -9,42 +9,47 @@ class CharInTheBattle {
   static Widget getChar(bool isEnemy, CharInBattle char, double width) {
     return GetBuilder<BattleController>(builder: (controller) {
       bool isTarget = false;
-      if (isEnemy &&
-          char.stats.health > 0 &&
-          controller.chooseTargetEnemy.value) {
-        isTarget = true;
-      }
-      if (!isEnemy &&
-          char.stats.health > 0 &&
-          controller.chooseTargetAlly.value) {
-        isTarget = true;
-      }
-      if (char.stats.health > 0 && controller.chooseTargetAll.value) {
-        isTarget = true;
-      }
-      if (!isEnemy &&
-          char.stats.health > 0 &&
-          char.id == controller.focus.myCharId &&
-          controller.chooseTargetMe.value) {
-        isTarget = true;
-      }
       bool clicable = false;
-      if (controller.focus.target == Target.AllAliveInGame &&
-          char.stats.health > 0) {
-        clicable = true;
-      } else if (isEnemy &&
-          controller.focus.target == Target.AllAliveAnemy &&
-          char.stats.health > 0) {
-        clicable = true;
-      } else if (!isEnemy &&
-          controller.focus.target == Target.AllAliveAlly &&
-          char.stats.health > 0) {
-        clicable = true;
-      } else if (!isEnemy &&
-          controller.focus.target == Target.Myself &&
-          char.stats.health > 0 &&
-          char.id == controller.focus.myCharId) {
-        clicable = true;
+      if (controller.whoIsMove.value == controller.myRole) {
+        if (isEnemy &&
+            char.stats.health > 0 &&
+            controller.chooseTargetEnemy.value) {
+          isTarget = true;
+        }
+        if (!isEnemy &&
+            char.stats.health > 0 &&
+            controller.chooseTargetAlly.value) {
+          isTarget = true;
+        }
+        if (char.stats.health > 0 && controller.chooseTargetAll.value) {
+          isTarget = true;
+        }
+        if (!isEnemy &&
+            char.stats.health > 0 &&
+            char.id == controller.focus.myCharId &&
+            controller.chooseTargetMe.value) {
+          isTarget = true;
+        }
+
+        if (controller.focus.target == Target.AllAliveInGame &&
+            char.stats.health > 0) {
+          clicable = true;
+        } else if (isEnemy &&
+            (controller.focus.target == Target.AllAliveAnemy ||
+                controller.focus.target == Target.SingleEnemyTarget) &&
+            char.stats.health > 0) {
+          clicable = true;
+        } else if (!isEnemy &&
+            (controller.focus.target == Target.AllAliveAlly ||
+                controller.focus.target == Target.SingleAlly) &&
+            char.stats.health > 0) {
+          clicable = true;
+        } else if (!isEnemy &&
+            controller.focus.target == Target.Myself &&
+            char.stats.health > 0 &&
+            char.id == controller.focus.myCharId) {
+          clicable = true;
+        }
       }
       return InkWell(
         onTap: clicable
