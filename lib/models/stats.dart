@@ -67,7 +67,7 @@ class Stats {
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'health': health,
       'armour': armour,
       'weaken': weaken,
@@ -91,6 +91,7 @@ class Stats {
       intelligence: map['intelligence'] as int,
     );
   }
+
 
   String toJson() => json.encode(toMap());
 

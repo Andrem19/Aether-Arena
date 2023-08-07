@@ -9,7 +9,7 @@ import 'enums.dart';
 class Effect {
   int id;
   String owner;
-  CharInBattle whoAttacker;
+  int whoAttackerId;
   int value;
   int value_min;
   int value_max;
@@ -21,7 +21,7 @@ class Effect {
   Effect({
     required this.id,
     required this.owner,
-    required this.whoAttacker,
+    required this.whoAttackerId,
     required this.value,
     required this.value_min,
     required this.value_max,
@@ -34,7 +34,7 @@ class Effect {
     return Effect(
       id: 0,
       owner: '',
-      whoAttacker: CharInBattle.empty(),
+      whoAttackerId: 0,
       value: 0,
       value_min: 0,
       value_max: 0,
@@ -54,7 +54,7 @@ class Effect {
     return Effect(
       id: json['id'],
       owner: json['owner'],
-      whoAttacker: CharInBattle.fromMap(json['whoAttackerId']),
+      whoAttackerId: json['whoAttackerId'],
       value: json['value'],
       value_min: json['value_min'],
       value_max: json['value_max'],
@@ -68,7 +68,7 @@ class Effect {
   Map<String, dynamic> toMap() => {
         'id': id,
         'owner': owner,
-        'whoAttackerId': whoAttacker.toMap(),
+        'whoAttackerId': whoAttackerId,
         'value': value,
         'value_min': value_min,
         'value_max': value_max,

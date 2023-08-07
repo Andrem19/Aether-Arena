@@ -13,7 +13,8 @@ class BattleMySkill {
       bool isSkillAvalible = isAvailable(skill, controller);
       return InkWell(
         onTap: () {
-          if (isSkillAvalible && controller.myRole == controller.whoIsMove.value) {
+          if (isSkillAvalible &&
+              controller.myRole == controller.whoIsMove.value) {
             controller.stopTimerBlinking();
             var main_cont = Get.find<MainGameController>();
             controller.charFocus = position;
@@ -53,7 +54,10 @@ class BattleMySkill {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 3, 8, 3),
           child: Opacity(
-            opacity: isSkillAvalible && controller.myRole == controller.whoIsMove.value ? 1.0 : 0.4,
+            opacity: isSkillAvalible &&
+                    controller.myRole == controller.whoIsMove.value
+                ? 1.0
+                : 0.4,
             child: Container(
               width: width * 0.1,
               height: width * 0.1,
@@ -118,15 +122,16 @@ class BattleMySkill {
     }
 
     Map<Energy, int> reqEnergy = Map.from(skill.requiredEnergy);
-    
-      int sum = 0;
-      for (var entry in energy.entries) {
-        var key = entry.key;
-        var value = entry.value;
-          sum += energy[key]!;
-      }
+
+    int sum = 0;
+    for (var entry in energy.entries) {
+      var key = entry.key;
+      var value = entry.value;
+      sum += energy[key]!;
+    }
     if (reqEnergy.containsKey(Energy.RANDOM)) {
-      if (sum < (reqEnergy[Energy.RANDOM]! + cont.my_move.value.totalRandomEnergy)) {
+      if (sum <
+          (reqEnergy[Energy.RANDOM]! + cont.my_move.value.totalRandomEnergy)) {
         return false;
       }
     } else {

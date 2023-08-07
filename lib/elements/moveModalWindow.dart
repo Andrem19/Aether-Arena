@@ -28,7 +28,8 @@ class MoveModalWindow extends StatelessWidget {
                       ? Icon(Icons.square, size: 50)
                       : Image.asset(
                           controller.my_char_1.value
-                              .getSkilByID(controller.my_move.value.char_1.skillId)
+                              .getSkilByID(
+                                  controller.my_move.value.char_1.skillId)
                               .img,
                           height: 50,
                         ),
@@ -36,7 +37,8 @@ class MoveModalWindow extends StatelessWidget {
                       ? Icon(Icons.square, size: 50)
                       : Image.asset(
                           controller.my_char_2.value
-                              .getSkilByID(controller.my_move.value.char_2.skillId)
+                              .getSkilByID(
+                                  controller.my_move.value.char_2.skillId)
                               .img,
                           height: 50,
                         ),
@@ -44,7 +46,8 @@ class MoveModalWindow extends StatelessWidget {
                       ? Icon(Icons.square, size: 50)
                       : Image.asset(
                           controller.my_char_3.value
-                              .getSkilByID(controller.my_move.value.char_3.skillId)
+                              .getSkilByID(
+                                  controller.my_move.value.char_3.skillId)
                               .img,
                           height: 50,
                         ),
@@ -64,7 +67,13 @@ class MoveModalWindow extends StatelessWidget {
                     onPressed: controller.my_move.value.totalRandomEnergy ==
                             BattleFunc.getEnergySum(
                                 controller.randomIGive.value)
-                        ? () {}
+                        ? () {
+                            controller.applyMyMove();
+                            controller.execMyMove();
+                            controller.endMoveAndPass();
+                            Navigator.of(context).pop();
+                            controller.resetEnergyIGive();
+                          }
                         : null,
                   ),
                   ElevatedButton(

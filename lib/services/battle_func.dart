@@ -9,16 +9,20 @@ import '../models/effect.dart';
 import '../models/skill.dart';
 
 class BattleFunc {
-  static Skill getAttackSkill(CharInBattle char, int skill_id) {
-    return char.allSkills.firstWhere((element) => element.id == skill_id);
-  }
+  // static Skill getAttackSkill(CharInBattle char, int skill_id) {
+  //   return char.allSkills.firstWhere((element) => element.id == skill_id);
+  // }
 
   static void addEffects(
       String owner, CharInBattle whoAttacker, Skill skill, int targetIfOne) {
+    print('addEffects');
+    print('effectsLenght: ${skill.effects.length}');
+
     var battleCont = Get.find<BattleController>();
     for (var i = 0; i < skill.effects.length; i++) {
       skill.effects[i].value = getEffectValue(
           skill.effects[i].value_min, skill.effects[i].value_max);
+      print('skill target: ${skill.effects[i].target}');
       if (skill.effects[i].target == Target.AllAliveAlly) {
         if (battleCont.my_char_1.value.stats.health > 0) {
           addEffect(
@@ -140,7 +144,21 @@ class BattleFunc {
     }
   }
 
-  static void execEffect(String myRole, Effect effect, CharInBattle targetChar) {
+  static CharInBattle whoAttacker(BattleController cont, int id) {
+    if (cont.my_char_1.value.id == id) {
+      return cont.my_char_1.value;
+    } else if (cont.my_char_2.value.id == id) {
+      return cont.my_char_2.value;
+    } else if (cont.my_char_3.value.id == id) {
+      return cont.my_char_3.value;
+    }
+    return CharInBattle.empty();
+  }
+
+  static void execEffect(
+      String myRole, Effect effect, CharInBattle targetChar) {
+    print('execEffects');
+    print('ecex effect type: ${effect.typeOfAction.toString()}');
     var battleCont = Get.find<BattleController>();
     if (myRole == effect.owner) {
       // if (targetChar.stats.weaken > 0) {
@@ -149,17 +167,23 @@ class BattleFunc {
       if (effect.typeOfAction == TypeOfAction.Attack) {
         int def = getDefence(targetChar);
         int damage = effect.value;
-        if (effect.whoAttacker.stats.weaken > 0) {
+        if (whoAttacker(battleCont, effect.whoAttackerId).stats.weaken > 0) {
           damage *= 0.75.toInt();
         }
         if (def < damage) {
-          int rest = def - damage;
-          targetChar.stats.health -= rest;
+          int rest = damage - def;
+          if (targetChar.stats.health > 0) {
+            print('attak');
+            battleCont.addRemoveHealsAnimated(targetChar, false, rest);
+          }
         }
         reduceDefence(targetChar, damage);
       } else if (effect.typeOfAction == TypeOfAction.Defence) {
       } else if (effect.typeOfAction == TypeOfAction.Heal) {
-        battleCont.addRemoveHealsAnimated(targetChar, true, effect.value);
+        if (targetChar.stats.health < 30) {
+          print('heal');
+          battleCont.addRemoveHealsAnimated(targetChar, true, effect.value);
+        }
       } else if (effect.typeOfAction == TypeOfAction.Poison) {
         targetChar.stats.poison += effect.value;
       } else if (effect.typeOfAction == TypeOfAction.Break) {
@@ -180,12 +204,13 @@ class BattleFunc {
         targetChar.attachedEffects.remove(effect);
       }
     }
+    battleCont.update();
   }
 
   static void addEffect(
       CharInBattle whoAttaker, String owner, Effect effect, CharInBattle char) {
     effect.owner = owner;
-    effect.whoAttacker = whoAttaker;
+    effect.whoAttackerId = whoAttaker.id;
     char.attachedEffects.add(effect);
   }
 
@@ -258,6 +283,7 @@ class BattleFunc {
       }
     }
   }
+
   static int getEnergySum(Map<Energy, int> map) {
     int sum = 0;
     map.forEach((energy, count) {

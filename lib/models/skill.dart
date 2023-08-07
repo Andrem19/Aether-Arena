@@ -69,20 +69,20 @@ class Skill {
   }
 
   Map<String, dynamic> toMap() {
-    Map<String, int> requiredEnergyAsString = requiredEnergy.map(
-        (key, value) => MapEntry(EnumSerializer.energyToString(key), value));
-    return <String, dynamic>{
-      'id': id,
-      'name': name,
-      'description': description,
-      'img': img,
-      'requiredEnergy': requiredEnergyAsString,
-      'target': EnumSerializer.targetToString(target),
-      'cooldownValue': cooldownValue,
-      'cooldown': cooldown,
-      'effects': effects.map((x) => x.toMap()).toList(),
-    };
-  }
+  Map<String, dynamic> requiredEnergyAsString = requiredEnergy.map(
+      (key, value) => MapEntry(EnumSerializer.energyToString(key), value));
+  return <String, dynamic>{
+    'id': id,
+    'name': name,
+    'description': description,
+    'img': img,
+    'requiredEnergy': requiredEnergyAsString,
+    'target': EnumSerializer.targetToString(target),
+    'cooldownValue': cooldownValue,
+    'cooldown': cooldown,
+    'effects': effects.map((x) => x.toMap()).toList(),
+  };
+}
 
   factory Skill.fromMap(Map<String, dynamic> map) {
     return Skill(

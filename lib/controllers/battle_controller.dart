@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/animation.dart';
@@ -23,10 +24,10 @@ class BattleController extends GetxController {
   AccountPlayerData my_accData = AccountPlayerData.empty();
   AccountPlayerData enemy_accData = AccountPlayerData.empty();
   Rx<Map<Energy, int>> myEnergy = Rx<Map<Energy, int>>({
-    Energy.ARCANE: 2,
+    Energy.ARCANE: 0,
     Energy.PHYSICAL: 0,
-    Energy.UNIQUE: 1,
-    Energy.WILLPOWER: 1,
+    Energy.UNIQUE: 0,
+    Energy.WILLPOWER: 0,
   });
   Rx<Map<Energy, int>> randomIGive = Rx<Map<Energy, int>>({
     Energy.ARCANE: 0,
@@ -97,54 +98,59 @@ class BattleController extends GetxController {
   }
 
   Future<void> setUpVars() async {
-    myRole = _mainContr.curentRole;
-    enemy_role = myRole == 'A' ? 'B' : 'A';
-    final doc = await _firebaseFirestore
-        .collection('battles')
-        .doc(_mainContr.curentGameId)
-        .get();
-    final data = doc.data();
-    whoIsMove.value = data!['WhosMove'];
-    currentGameId = _mainContr.curentGameId;
+    try {
+      myRole = _mainContr.curentRole;
+      enemy_role = myRole == 'A' ? 'B' : 'A';
+      final doc = await _firebaseFirestore
+          .collection('battles')
+          .doc(_mainContr.curentGameId)
+          .get();
+      final data = doc.data();
+      whoIsMove.value = data!['WhosMove'];
+      currentGameId = _mainContr.curentGameId;
 
-    var Achar_1 = CharInBattle.fromJson(data['playerA_char_1']);
-    var Achar_2 = CharInBattle.fromJson(data['playerA_char_2']);
-    var Achar_3 = CharInBattle.fromJson(data['playerA_char_3']);
+      var Achar_1 = CharInBattle.fromJson(data['playerA_char_1']);
+      var Achar_2 = CharInBattle.fromJson(data['playerA_char_2']);
+      var Achar_3 = CharInBattle.fromJson(data['playerA_char_3']);
 
-    var Bchar_1 = CharInBattle.fromJson(data['playerB_char_1']);
-    var Bchar_2 = CharInBattle.fromJson(data['playerB_char_2']);
-    var Bchar_3 = CharInBattle.fromJson(data['playerB_char_3']);
+      var Bchar_1 = CharInBattle.fromJson(data['playerB_char_1']);
+      var Bchar_2 = CharInBattle.fromJson(data['playerB_char_2']);
+      var Bchar_3 = CharInBattle.fromJson(data['playerB_char_3']);
 
-    my_accData = myRole == 'A'
-        ? AccountPlayerData.fromJson(data['PlayerA_accData'])
-        : AccountPlayerData.fromJson(data['PlayerB_accData']);
-    enemy_accData = myRole == 'A'
-        ? AccountPlayerData.fromJson(data['PlayerB_accData'])
-        : AccountPlayerData.fromJson(data['PlayerA_accData']);
+      my_accData = myRole == 'A'
+          ? AccountPlayerData.fromJson(data['PlayerA_accData'])
+          : AccountPlayerData.fromJson(data['PlayerB_accData']);
+      enemy_accData = myRole == 'A'
+          ? AccountPlayerData.fromJson(data['PlayerB_accData'])
+          : AccountPlayerData.fromJson(data['PlayerA_accData']);
 
-    if (myRole == 'A') {
-      my_char_1.value = Achar_1;
-      my_char_2.value = Achar_2;
-      my_char_3.value = Achar_3;
+      if (myRole == 'A') {
+        my_char_1.value = Achar_1;
+        my_char_2.value = Achar_2;
+        my_char_3.value = Achar_3;
 
-      enemy_char_1.value = Bchar_1;
-      enemy_char_2.value = Bchar_2;
-      enemy_char_3.value = Bchar_3;
-    } else {
-      my_char_1.value = Bchar_1;
-      my_char_2.value = Bchar_2;
-      my_char_3.value = Bchar_3;
+        enemy_char_1.value = Bchar_1;
+        enemy_char_2.value = Bchar_2;
+        enemy_char_3.value = Bchar_3;
+      } else {
+        my_char_1.value = Bchar_1;
+        my_char_2.value = Bchar_2;
+        my_char_3.value = Bchar_3;
 
-      enemy_char_1.value = Achar_1;
-      enemy_char_2.value = Achar_2;
-      enemy_char_3.value = Achar_3;
+        enemy_char_1.value = Achar_1;
+        enemy_char_2.value = Achar_2;
+        enemy_char_3.value = Achar_3;
+      }
+
+      timerValue.value = timeOfMove;
+      if (whoIsMove.value == myRole) {
+        addRandomEnergy(1);
+        _startTimerMove();
+      }
+      update();
+    } catch (error) {
+      print(error.toString());
     }
-
-    timerValue.value = timeOfMove;
-    if (whoIsMove.value == myRole) {
-      _startTimerMove();
-    }
-    update();
   }
 
   void _startListener() {
@@ -154,36 +160,11 @@ class BattleController extends GetxController {
       if (snapshot.exists) {
         final data = snapshot.data();
         whoIsMove.value = data!['WhosMove'];
-
-        var Achar_1 = CharInBattle.fromJson(data['playerA_char_1']);
-        var Achar_2 = CharInBattle.fromJson(data['playerA_char_2']);
-        var Achar_3 = CharInBattle.fromJson(data['playerA_char_3']);
-
-        var Bchar_1 = CharInBattle.fromJson(data['playerB_char_1']);
-        var Bchar_2 = CharInBattle.fromJson(data['playerB_char_2']);
-        var Bchar_3 = CharInBattle.fromJson(data['playerB_char_3']);
-
-        if (myRole == 'A') {
-          my_char_1.value = Achar_1;
-          my_char_2.value = Achar_2;
-          my_char_3.value = Achar_3;
-
-          enemy_char_1.value = Bchar_1;
-          enemy_char_2.value = Bchar_2;
-          enemy_char_3.value = Bchar_3;
-        } else {
-          my_char_1.value = Bchar_1;
-          my_char_2.value = Bchar_2;
-          my_char_3.value = Bchar_3;
-
-          enemy_char_1.value = Achar_1;
-          enemy_char_2.value = Achar_2;
-          enemy_char_3.value = Achar_3;
-        }
+        loadMove(data);
 
         if (whoIsMove.value == myRole && _timer == null) {
           timerValue.value = timeOfMove;
-          // loadMove();
+          addEnergyWhenStartMove();
           _startTimerMove();
         }
         if (whoIsMove.value != myRole) {
@@ -207,11 +188,7 @@ class BattleController extends GetxController {
       timerValue.value--;
       update();
       if (timerValue == 0) {
-        // saveMove();
-        timerValue.value = timeOfMove;
-        _timer?.cancel();
-        _setUpNextMove();
-        update();
+        endMoveAndPass();
       }
     });
   }
@@ -225,18 +202,12 @@ class BattleController extends GetxController {
 
   void applyMyMove() {
     if (my_move.value.isNew == true) {
-      Skill skill_1 =
-          BattleFunc.getAttackSkill(my_char_1.value, my_move.value.char_1.skillId);
-      BattleFunc.addEffects(
-          myRole, my_char_1.value, skill_1, my_move.value.char_1.ifOneWho);
-      Skill skill_2 =
-          BattleFunc.getAttackSkill(my_char_2.value, my_move.value.char_2.skillId);
-      BattleFunc.addEffects(
-          myRole, my_char_2.value, skill_2, my_move.value.char_2.ifOneWho);
-      Skill skill_3 =
-          BattleFunc.getAttackSkill(my_char_3.value, my_move.value.char_3.skillId);
-      BattleFunc.addEffects(
-          myRole, my_char_3.value, skill_3, my_move.value.char_3.ifOneWho);
+      BattleFunc.addEffects(myRole, my_char_1.value, my_move.value.char_1.skill,
+          my_move.value.char_1.ifOneWho);
+      BattleFunc.addEffects(myRole, my_char_2.value, my_move.value.char_2.skill,
+          my_move.value.char_2.ifOneWho);
+      BattleFunc.addEffects(myRole, my_char_3.value, my_move.value.char_3.skill,
+          my_move.value.char_3.ifOneWho);
     }
   }
 
@@ -270,6 +241,13 @@ class BattleController extends GetxController {
   }
 
   void saveMove() async {
+    print('saveMove');
+    print(my_char_1.value.stats.toJson());
+    print(my_char_2.value.stats.toJson());
+    print(my_char_3.value.stats.toJson());
+    print(enemy_char_1.value.stats.toJson());
+    print(enemy_char_2.value.stats.toJson());
+    print(enemy_char_3.value.stats.toJson());
     await _firebaseFirestore.collection('battles').doc(currentGameId).update({
       'playerA_char_1': myRole == 'A'
           ? my_char_1.value.toJson()
@@ -292,10 +270,96 @@ class BattleController extends GetxController {
     });
   }
 
-  void loadMove() async {
-    var doc =
-        await _firebaseFirestore.collection('battles').doc(currentGameId).get();
-    var data = doc.data();
+  void loadMove(Map<String, dynamic> data) async {
+    print('loadMove');
+    var Achar_1 = CharInBattle.fromJson(data['playerA_char_1']);
+    var Achar_2 = CharInBattle.fromJson(data['playerA_char_2']);
+    var Achar_3 = CharInBattle.fromJson(data['playerA_char_3']);
+    var Bchar_1 = CharInBattle.fromJson(data['playerB_char_1']);
+    var Bchar_2 = CharInBattle.fromJson(data['playerB_char_2']);
+    var Bchar_3 = CharInBattle.fromJson(data['playerB_char_3']);
+
+    List<CharInBattle> myChars = [
+      my_char_1.value,
+      my_char_2.value,
+      my_char_3.value,
+    ];
+
+    List<CharInBattle> enemyChars = [
+      enemy_char_1.value,
+      enemy_char_2.value,
+      enemy_char_3.value,
+    ];
+
+    if (myRole == 'A') {
+      for (int i = 0; i < myChars.length; i++) {
+        CharInBattle myChar = myChars[i];
+        CharInBattle aChar = [Achar_1, Achar_2, Achar_3][i];
+
+        myChar.attachedEffects = aChar.attachedEffects;
+
+        if (myChar.stats.health > aChar.stats.health) {
+          int damage = myChar.stats.health - aChar.stats.health;
+          addRemoveHealsAnimated(myChar, false, damage+1);
+        } else if (myChar.stats.health < aChar.stats.health) {
+          int heal = aChar.stats.health - myChar.stats.health;
+          addRemoveHealsAnimated(myChar, true, heal+1);
+        }
+      }
+
+      for (int i = 0; i < enemyChars.length; i++) {
+        CharInBattle enemyChar = enemyChars[i];
+        CharInBattle bChar = [Bchar_1, Bchar_2, Bchar_3][i];
+
+        enemyChar.attachedEffects = bChar.attachedEffects;
+
+        if (enemyChar.stats.health > bChar.stats.health) {
+          int damage = enemyChar.stats.health - bChar.stats.health;
+          addRemoveHealsAnimated(enemyChar, false, damage+1);
+        } else if (enemyChar.stats.health < bChar.stats.health) {
+          int heal = bChar.stats.health - enemyChar.stats.health;
+          addRemoveHealsAnimated(enemyChar, true, heal+1);
+        }
+      }
+    } else if (myRole == 'B') {
+      for (int i = 0; i < myChars.length; i++) {
+        CharInBattle myChar = myChars[i];
+        CharInBattle bChar = [Bchar_1, Bchar_2, Bchar_3][i];
+
+        myChar.attachedEffects = bChar.attachedEffects;
+
+        if (myChar.stats.health > bChar.stats.health) {
+          int damage = myChar.stats.health - bChar.stats.health;
+          addRemoveHealsAnimated(myChar, false, damage+1);
+        } else if (myChar.stats.health < bChar.stats.health) {
+          int heal = bChar.stats.health - myChar.stats.health;
+          addRemoveHealsAnimated(myChar, true, heal+1);
+        }
+      }
+
+      for (int i = 0; i < enemyChars.length; i++) {
+        CharInBattle enemyChar = enemyChars[i];
+        CharInBattle aChar = [Achar_1, Achar_2, Achar_3][i];
+
+        enemyChar.attachedEffects = aChar.attachedEffects;
+
+        if (enemyChar.stats.health > aChar.stats.health) {
+          int damage = enemyChar.stats.health - aChar.stats.health;
+          addRemoveHealsAnimated(enemyChar, false, damage+1);
+        } else if (enemyChar.stats.health < aChar.stats.health) {
+          int heal = aChar.stats.health - enemyChar.stats.health;
+          addRemoveHealsAnimated(enemyChar, true, heal+1);
+        }
+      }
+    }
+  }
+
+  void endMoveAndPass() {
+    my_move.value = Move.empty();
+    timerValue.value = timeOfMove;
+    _timer?.cancel();
+    _setUpNextMove();
+    update();
   }
 
   void setCharFocus(int id) {
@@ -427,55 +491,104 @@ class BattleController extends GetxController {
   }
 
   void addRemoveHealsAnimated(CharInBattle target, bool plus, int val) {
+    print('animated damage');
+    print('value: ${val}');
     if (target.stats.health > 0) {
-      for (var i = 0; i < val; i++) {
-        Future.delayed(Duration(milliseconds: 70)).then((value) {
-          if (plus) {
-            if (target.stats.health < 30) {
-              target.stats.health++;
-            }
-          } else {
-            if (target.stats.health > 0) {
-              target.stats.health--;
-            }
+      for (var i = 0; i < val + 1; i++) {
+        if (plus) {
+          if (target.stats.health < 30) {
+            print('plus');
+            target.stats.health++;
           }
-          update();
-        });
+        } else {
+          if (target.stats.health > 0) {
+            print('minus');
+            target.stats.health--;
+          }
+        }
+        update();
       }
     }
   }
 
   void subtractRandomEnergy(Energy energyType) {
-  if (myEnergy.value.containsKey(energyType)) {
-    int currentEnergy = myEnergy.value[energyType] ?? 0;
-    if (currentEnergy > 0) {
-      myEnergy.value[energyType] = currentEnergy - 1;
+    if (myEnergy.value.containsKey(energyType)) {
+      int currentEnergy = myEnergy.value[energyType] ?? 0;
+      if (currentEnergy > 0) {
+        myEnergy.value[energyType] = currentEnergy - 1;
 
+        int currentRandomGive = randomIGive.value[energyType] ?? 0;
+        randomIGive.value[energyType] = currentRandomGive + 1;
+      }
+    }
+    update();
+  }
+
+  void returnRandomEnergy(Energy energyType) {
+    if (myEnergy.value.containsKey(energyType)) {
+      int currentEnergy = myEnergy.value[energyType] ?? 0;
       int currentRandomGive = randomIGive.value[energyType] ?? 0;
-      randomIGive.value[energyType] = currentRandomGive + 1;
-    }
-  }
-  update();
-}
 
-void returnRandomEnergy(Energy energyType) {
-  if (myEnergy.value.containsKey(energyType)) {
-    int currentEnergy = myEnergy.value[energyType] ?? 0;
-    int currentRandomGive = randomIGive.value[energyType] ?? 0;
-
-    if (currentRandomGive > 0) {
-      myEnergy.value[energyType] = currentEnergy + 1;
-      randomIGive.value[energyType] = currentRandomGive - 1;
+      if (currentRandomGive > 0) {
+        myEnergy.value[energyType] = currentEnergy + 1;
+        randomIGive.value[energyType] = currentRandomGive - 1;
+      }
     }
+    update();
   }
-  update();
-}
 
   void transferEnergyBack() {
-  myEnergy.value.forEach((energy, value) {
-    myEnergy.value[energy] = value + randomIGive.value[energy]!;
-    randomIGive.value[energy] = 0;
-  });
+    myEnergy.value.forEach((energy, value) {
+      myEnergy.value[energy] = value + randomIGive.value[energy]!;
+      randomIGive.value[energy] = 0;
+    });
+  }
+
+  void addRandomEnergy(int count) {
+  final random = Random();
+  final availableEnergyTypes = Energy.values.where((type) => type != Energy.RANDOM).toList();
+
+  for (var i = 0; i < count; i++) {
+    final energyType = availableEnergyTypes[random.nextInt(availableEnergyTypes.length)];
+    myEnergy.update((value) {
+      value![energyType] =
+          value.containsKey(energyType) ? value[energyType]! + 1 : 1;
+    });
+  }
 }
-  
+
+
+  void addEnergyWhenStartMove() {
+    addRandomEnergy(3);
+    addInteligenceEnergy(my_char_1.value);
+    addInteligenceEnergy(my_char_2.value);
+    addInteligenceEnergy(my_char_3.value);
+    update();
+  }
+
+  void addInteligenceEnergy(CharInBattle char) {
+    int perc = char.stats.intelligence;
+    if (perc > 0 && perc < 100) {
+      bool res = Random().nextInt(100) < perc;
+      if (res) {
+        addRandomEnergy(1);
+      }
+    } else if (perc > 100) {
+      addRandomEnergy(1);
+      perc = perc % 100;
+      bool res = Random().nextInt(100) < perc;
+      if (res) {
+        addRandomEnergy(1);
+      }
+    }
+  }
+
+  void resetEnergyIGive() {
+    randomIGive.value = {
+      Energy.ARCANE: 0,
+      Energy.PHYSICAL: 0,
+      Energy.UNIQUE: 0,
+      Energy.WILLPOWER: 0,
+    };
+  }
 }
